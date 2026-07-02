@@ -22,7 +22,7 @@ interface TsServerOptions {
 | `models.ts` | Validation schemas (Zod or Valibot) + TypeScript interfaces for all named models (including config) |
 | `{group}/{id}.ts` | Per-operation: `XxxOperation` namespace (Request/Response/Handler types), schema validation, URLPattern |
 | `index.ts` | `XxxHandlers` interfaces + `createXxxRouter()` factory functions per router group |
-| `config.ts` | (if `configuration` provided) Schema-validated runtime config with env parameterization, taggedUnion/union resolution |
+| `config.ts` | (if `configuration` provided) Schema-validated runtime config with env parameterization, union resolution |
 
 ### Handler signature
 
