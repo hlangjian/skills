@@ -22,13 +22,11 @@ Use the factory (left column). The right column shows generated output — do no
 | `map` | `map({ base: T, ... })` | `type: "object", additionalProperties: T` |
 | `record` | `record({ id, properties, optional?, ... })` | `type: "object"` with `$ref` to named schema |
 | `enums` | `enums({ id, variants: {...}, ... })` | `type: "string", enum: [...]` |
-| `union` | `union({ id, variants: {...}, ... })` | `oneOf` with variant-key wrapper |
-| `taggedUnion` | `taggedUnion({ id, discriminator, variants, ... })` | `oneOf` with discriminator embedded in variant schemas |
+| `union` | `union({ id, discriminator, variants, ... })` | `oneOf` with discriminator embedded in variant schemas |
 | `unknown` | `unknown(opts?)` | `{}` (matches any value) |
 
 ## Key rules
 
-- `record`, `enums`, `union`, `taggedUnion` **require an `id`** — they become named schemas.
-- `taggedUnion` uses `discriminator` to specify which field acts as the discriminator. Each variant's `RecordModel` must include that field as a required `literal(value)` where the value matches the variant key.
-- `union` wraps each variant in `{ [variantName]: variantSchema }`.
+- `record`, `enums`, `union` **require an `id`** — they become named schemas.
+- `union` uses `discriminator` to specify which field acts as the discriminator. Each variant's `RecordModel` must include that field as a required `literal(value)` where the value matches the variant key.
 - `set` generates `uniqueItems: true` in JSON Schema.

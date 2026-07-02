@@ -54,7 +54,7 @@ const schema = generateJsonSchema(ServerConfig) // ← 应使用 generateConfigJ
 ## `generateConfigJsonSchema` 行为
 
 - 自动把解析后模型转为输入模型（有 `default` 的字段变为 optional）
-- 递归处理嵌套的 `record`、`taggedUnion`、`union`
+- 递归处理嵌套的 `record`、`union`
 - 对于 `array`/`set`/`map`，仅当 `base` 是带 `id` 的复杂模型时才递归
 - 同一模型引用多次时通过缓存去重（避免重复 `$defs`）
 - 所有复杂模型的 `id` 保持不变

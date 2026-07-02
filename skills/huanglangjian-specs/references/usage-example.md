@@ -3,7 +3,7 @@
 Complete warehouse CRUD example:
 
 ```ts
-import { int32, string, datetime, array, record, enums, set, literal, taggedUnion, union } from "@huanglangjian/specs"
+import { int32, string, datetime, array, record, enums, set, literal, union } from "@huanglangjian/specs"
 import { route, json, binary as binaryResponse, router } from "@huanglangjian/specs"
 import { generateOpenapi } from "@huanglangjian/specs"
 import { generateJsonSchema } from "@huanglangjian/specs"
@@ -80,7 +80,7 @@ const ServerConfig = record({
       id: "LogLevel",
       variants: { debug: "debug", info: "info", warn: "warn", error: "error" },
     }),
-    database: taggedUnion({
+    database: union({
       id: "DatabaseConfig",
       discriminator: "type",
       variants: {
@@ -90,9 +90,10 @@ const ServerConfig = record({
     }),
     cache: union({
       id: "CacheConfig",
+      discriminator: "type",
       variants: {
-        redis: record({ id: "RedisCache", properties: { url: string({ description: "Redis 连接地址" }), prefix: string({ description: "缓存键前缀" }) }, optional: ["prefix"] }),
-        memory: record({ id: "MemoryCache", properties: { maxSize: int32({ description: "最大缓存条目数" }), ttl: int32({ description: "缓存过期秒数" }) }, optional: ["ttl"] }),
+        redis: record({ id: "RedisCache", properties: { type: literal("redis"), url: string({ description: "Redis 连接地址" }), prefix: string({ description: "缓存键前缀" }) }, optional: ["prefix"] }),
+        memory: record({ id: "MemoryCache", properties: { type: literal("memory"), maxSize: int32({ description: "最大缓存条目数" }), ttl: int32({ description: "缓存过期秒数" }) }, optional: ["ttl"] }),
       },
     }),
   },

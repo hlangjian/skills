@@ -74,7 +74,7 @@ Automatically collects all named models from route bodies/responses, generates `
 
 ## `generateJsonSchema(model, options?)` → `JsonSchemaObject`
 
-Generate a complete JSON Schema (Draft 2020-12) for the given model. Named sub-models (record, enums, union, taggedUnion with `id`) are automatically discovered and placed in `$defs`.
+Generate a complete JSON Schema (Draft 2020-12) for the given model. Named sub-models (record, enums, union with `id`) are automatically discovered and placed in `$defs`.
 
 ```ts
 const schema = generateJsonSchema(ServerConfig)
@@ -98,7 +98,7 @@ The `SchemaRegistry` is immutable; `.add(id, model)` returns a new registry.
 
 ### `collectNamedModels(models, options?)` → `AnyNamedDescriptor[]`
 
-Collects named descriptors (record, enums, union, taggedUnion) from an array of models.
+Collects named descriptors (record, enums, union) from an array of models.
 
 ### `collectOperations(routers)` → `OperationDescriptor[]`
 

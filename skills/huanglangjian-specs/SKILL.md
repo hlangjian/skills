@@ -8,13 +8,13 @@ description: "Typed models, routes, and security; OpenAPI 3.2 & JSON Schema 2020
 ## Workflow
 
 1. Check [Model kinds](./references/model-kinds.md) for available types and factory signatures.
-2. Define data models with factory functions (`record`, `enums`, `union`, `taggedUnion`, etc.).
+2. Define data models with factory functions (`record`, `enums`, `union`, etc.).
 3. Group routes with `router({ id, routes, tag?, basePath?, description? })`.
 4. Call `generateOpenapi()`, `generateJsonSchema()`, or `generateConfigJsonSchema()` to produce output.
 
 ## Key constraints
 
-- `record`, `enums`, `union`, `taggedUnion` must have an `id` — they become named schemas.
+- `record`, `enums`, `union` must have an `id` — they become named schemas.
 - `router` generates an OpenAPI tag from `tag ?? id`. Do NOT set `tags` on individual routes unless extra tags are needed.
 - Never write raw `{ kind: "..." }` objects — always use factory functions.
 - For config model JSON Schema, use `generateConfigJsonSchema()`, **not** `generateJsonSchema()`. Fields with `default` must not appear in `optional` — see [Config models](./references/config-models.md).
