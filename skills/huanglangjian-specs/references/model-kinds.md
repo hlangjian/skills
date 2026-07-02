@@ -22,11 +22,11 @@ Use the factory (left column). The right column shows generated output — do no
 | `map` | `map({ base: T, ... })` | `type: "object", additionalProperties: T` |
 | `record` | `record({ id, properties, optional?, ... })` | `type: "object"` with `$ref` to named schema |
 | `enums` | `enums({ id, variants: {...}, ... })` | `type: "string", enum: [...]` |
-| `union` | `union({ id, discriminator, variants, ... })` | `oneOf` with discriminator embedded in variant schemas |
+| `union` | `union({ id, discriminator?, variants, ... })` | `oneOf` with discriminator auto-injected into variant schemas |
 | `unknown` | `unknown(opts?)` | `{}` (matches any value) |
 
 ## Key rules
 
 - `record`, `enums`, `union` **require an `id`** — they become named schemas.
-- `union` uses `discriminator` to specify which field acts as the discriminator. Each variant's `RecordModel` must include that field as a required `literal(value)` where the value matches the variant key.
+- `union` uses `discriminator` (defaults to `"type"`, optional) to specify which field acts as the discriminator. The `literal(value)` matching each variant key is auto-injected at type/JSON Schema/codegen layers — variants only declare business fields. If `discriminator` conflicts with an existing variant property, a runtime error is thrown.
 - `set` generates `uniqueItems: true` in JSON Schema.

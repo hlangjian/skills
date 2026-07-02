@@ -5,7 +5,7 @@
 3. **Operation grouping**: operations are written into directories named from `router.id` (`{camelCase(router.id)}/{operation}.ts`). Codegen does not emit OpenAPI tags — tags are a `@huanglangjian/specs` / `generateOpenapi` concern.
 4. **Configuration generation** supports nested `record`, `union`, `array`, `set`, and `enums`, with env parameterization (`getXxxConfig(env = process.env)`). Config model types are also generated in `models.ts`.
    - Each field's optionality (the record's `optional` list) and model `default` are translated into the generated env schema.
-   - A `union` field's discriminator env var is named from the union's discriminator (e.g. `DATABASE_TYPE`), matching the variant literal — not the field name.
+   - A `union` field's discriminator env var is named from the union's discriminator (e.g. `DATABASE_TYPE`), matching the variant key — not the field name.
 5. **Validation library**: Zod (default) or Valibot via `validationLib`. Generated zod uses the non-deprecated formats (`z.iso.datetime()`, `z.iso.date()`, `z.uuid()`).
 6. **Router factory functions**: `createWarehousesRouter(handlers)` wraps all per-operation handlers and returns an array of `{ method, path, handler }` objects.
 7. **Client response discrimination**: destructure on `status` to narrow the `Operation.Response` union:

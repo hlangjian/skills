@@ -3,7 +3,7 @@
 Complete warehouse CRUD example:
 
 ```ts
-import { int32, string, datetime, array, record, enums, set, literal, union } from "@huanglangjian/specs"
+import { int32, string, datetime, array, record, enums, set, union } from "@huanglangjian/specs"
 import { route, json, binary as binaryResponse, router } from "@huanglangjian/specs"
 import { generateOpenapi } from "@huanglangjian/specs"
 import { generateJsonSchema } from "@huanglangjian/specs"
@@ -56,7 +56,6 @@ const ErrorResponse = record({
 const PostgresConfig = record({
   id: "PostgresConfig",
   properties: {
-    type: literal("postgres"),
     host: string({ description: "主机地址" }),
     port: int32({ description: "端口" }),
     username: string({ description: "数据库用户名" }),
@@ -66,7 +65,7 @@ const PostgresConfig = record({
 
 const SqliteConfig = record({
   id: "SqliteConfig",
-  properties: { type: literal("sqlite"), name: string({ description: "数据库文件名" }) },
+  properties: { name: string({ description: "数据库文件名" }) },
 })
 
 const ServerConfig = record({
@@ -82,7 +81,6 @@ const ServerConfig = record({
     }),
     database: union({
       id: "DatabaseConfig",
-      discriminator: "type",
       variants: {
         postgres: PostgresConfig,
         sqlite: SqliteConfig,
@@ -90,10 +88,9 @@ const ServerConfig = record({
     }),
     cache: union({
       id: "CacheConfig",
-      discriminator: "type",
       variants: {
-        redis: record({ id: "RedisCache", properties: { type: literal("redis"), url: string({ description: "Redis 连接地址" }), prefix: string({ description: "缓存键前缀" }) }, optional: ["prefix"] }),
-        memory: record({ id: "MemoryCache", properties: { type: literal("memory"), maxSize: int32({ description: "最大缓存条目数" }), ttl: int32({ description: "缓存过期秒数" }) }, optional: ["ttl"] }),
+        redis: record({ id: "RedisCache", properties: { url: string({ description: "Redis 连接地址" }), prefix: string({ description: "缓存键前缀" }) }, optional: ["prefix"] }),
+        memory: record({ id: "MemoryCache", properties: { maxSize: int32({ description: "最大缓存条目数" }), ttl: int32({ description: "缓存过期秒数" }) }, optional: ["ttl"] }),
       },
     }),
   },
