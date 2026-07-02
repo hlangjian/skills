@@ -4,7 +4,7 @@ Complete warehouse CRUD example:
 
 ```ts
 import { int32, string, datetime, array, record, enums, set, union } from "@huanglangjian/specs"
-import { route, json, binary as binaryResponse, router } from "@huanglangjian/specs"
+import { route, json, binary, router } from "@huanglangjian/specs"
 import { generateOpenapi } from "@huanglangjian/specs"
 import { generateJsonSchema } from "@huanglangjian/specs"
 import { apikey, openIdConnect } from "@huanglangjian/specs"
@@ -105,15 +105,15 @@ const warehouseRouter = router({
       method: "GET",
       path: "/warehouses",
       summary: "获取仓库列表",
-      responses: { 200: json({ summary: "仓库列表", body: array({ base: Warehouse }) }) },
+      responses: { ListSuccess: json({ status: 200, body: array({ base: Warehouse }) }) },
     }),
     getWarehouse: route({
       method: "GET",
       path: "/warehouses/{id}",
       variables: { id: int32({ description: "仓库ID" }) },
       responses: {
-        200: json({ summary: "仓库详情", body: Warehouse }),
-        404: json({ summary: "仓库不存在", body: ErrorResponse }),
+        Success:  json({ status: 200, body: Warehouse }),
+        NotFound: json({ status: 404, body: ErrorResponse }),
       },
     }),
     createWarehouse: route({
@@ -121,8 +121,8 @@ const warehouseRouter = router({
       path: "/warehouses",
       body: CreateWarehouse,
       responses: {
-        201: json({ summary: "创建成功", body: Warehouse }),
-        400: json({ summary: "请求参数错误", body: ErrorResponse }),
+        Created:   json({ status: 201, body: Warehouse }),
+        BadRequest: json({ status: 400, body: ErrorResponse }),
       },
     }),
     updateWarehouse: route({
@@ -131,8 +131,8 @@ const warehouseRouter = router({
       variables: { id: int32({ description: "仓库ID" }) },
       body: UpdateWarehouse,
       responses: {
-        200: json({ summary: "更新成功", body: Warehouse }),
-        404: json({ summary: "仓库不存在", body: ErrorResponse }),
+        Updated:  json({ status: 200, body: Warehouse }),
+        NotFound: json({ status: 404, body: ErrorResponse }),
       },
     }),
     deleteWarehouse: route({
@@ -140,14 +140,14 @@ const warehouseRouter = router({
       path: "/warehouses/{id}",
       variables: { id: int32({ description: "仓库ID" }) },
       responses: {
-        204: json({ summary: "删除成功" }),
-        404: json({ summary: "仓库不存在", body: ErrorResponse }),
+        Deleted:  json({ status: 204 }),
+        NotFound: json({ status: 404, body: ErrorResponse }),
       },
     }),
     exportWarehouses: route({
       method: "GET",
       path: "/warehouses/export",
-      responses: { 200: binaryResponse({ summary: "导出文件" }) },
+      responses: { ExportFile: binary({ status: 200 }) },
     }),
   },
 })

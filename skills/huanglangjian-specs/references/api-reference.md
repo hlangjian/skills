@@ -10,7 +10,7 @@ route({
   body?: Models,                           // request body
   queries?: RecordModel<...>,              // query parameters
   headers?: RecordModel<...>,              // request headers
-  responses: Record<number, ResponseModel>,  // status code -> response
+  responses: Record<string, ResponseModel>,   // semantic key -> response
   tags?: string[],                         // auto-populated from RouterModel.tag ?? RouterModel.id
   summary?: string,
   description?: string,
@@ -19,10 +19,10 @@ route({
 ```
 
 Response types:
-- `json({ body?, headers?, summary? })` — `application/json`
-- `jsonStream({ body?, headers?, summary? })` — streaming JSON (`application/x-ndjson`)
-- `sseStream({ body?, headers?, summary? })` — Server-Sent Events
-- `binary({ headers?, summary?, contentType? })` — binary response
+- `json({ status, body?, headers? })` — `application/json`
+- `jsonStream({ status, body?, headers? })` — streaming JSON (`application/x-ndjson`)
+- `sseStream({ status, body?, headers? })` — Server-Sent Events
+- `binary({ status, headers?, contentType? })` — binary response
 
 ## Router grouping
 
