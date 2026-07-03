@@ -8,7 +8,10 @@
    - A `union` field's discriminator env var is named from the union's discriminator (e.g. `DATABASE_TYPE`), matching the variant key — not the field name.
 5. **Validation library**: Zod (default) or Valibot via `validationLib`. Generated zod uses the non-deprecated formats (`z.iso.datetime()`, `z.iso.date()`, `z.uuid()`).
 6. **Router factory functions**: `createWarehousesRouter(handlers)` wraps all per-operation handlers and returns an array of `{ method, path, handler }` objects.
-7. **Client response discrimination**: destructure on `status` to narrow the `Operation.Response` union:
+7. **Client design** — `Client` is `{ fetch }`, not an operation wrapper. This guarantees tree-shaking: importing `getWarehouse` does not pull in other operations. The `client` parameter lives on each request (not global state), making calls SSR-safe and enabling different clients per invocation.
+8. **URL builder naming**: `get{PascalCaseOpName}Url` — e.g. `getWarehouse` → `getGetWarehouseUrl`. Use standalone for cache keys, prefetch, or batch URL construction. Path params are auto-URL-encoded.
+9. **Headers are dynamic**: `headers` in `ClientConfig` accepts a sync/async function, enabling live token refresh per request.
+10. **Client response discrimination**: destructure on `status` to narrow the `Operation.Response` union:
    ```ts
    const result = await getWarehouse({ params: { id: 1 } })
    if (result.status === 200) { result.body.name } // Warehouse

@@ -15,6 +15,7 @@ route({
   summary?: string,
   description?: string,
   contentType?: string,
+  deprecated?: boolean,
 })
 ```
 
@@ -23,6 +24,20 @@ Response types:
 - `jsonStream({ status, body?, headers? })` — streaming JSON (`application/x-ndjson`)
 - `sseStream({ status, body?, headers? })` — Server-Sent Events
 - `binary({ status, headers?, contentType? })` — binary response
+
+## RPC definition
+
+```ts
+import { rpc } from "@huanglangjian/specs"
+
+rpc({
+  parameters: { userId: string() },
+  results: {
+    success: record({ id: "UserResult", properties: { name: string() } }),
+    error: record({ id: "ErrorResult", properties: { message: string() } }),
+  },
+})
+```
 
 ## Router grouping
 

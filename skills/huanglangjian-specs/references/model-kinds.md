@@ -23,6 +23,7 @@ Use the factory (left column). The right column shows generated output — do no
 | `record` | `record({ id, properties, optional?, ... })` | `type: "object"` with `$ref` to named schema |
 | `enums` | `enums({ id, variants: {...}, ... })` | `type: "string", enum: [...]` |
 | `union` | `union({ id, discriminator?, variants, ... })` | `oneOf` with discriminator auto-injected into variant schemas |
+| `rpc` | `rpc({ parameters, results })` | (service definition only, used by codegen) |
 | `unknown` | `unknown(opts?)` | `{}` (matches any value) |
 
 ## Key rules
