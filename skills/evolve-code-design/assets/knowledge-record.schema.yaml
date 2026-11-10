@@ -1,0 +1,113 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://example.local/schemas/knowledge-record-v0.1.schema.yaml"
+title: Knowledge Records v0.1
+type: object
+additionalProperties: false
+required: [schema_version, records]
+properties:
+  schema_version: {const: "0.1"}
+  records:
+    type: array
+    items: {$ref: "#/$defs/record"}
+$defs:
+  idArray:
+    type: array
+    items: {type: string, minLength: 1}
+    uniqueItems: true
+  record:
+    type: object
+    additionalProperties: false
+    required:
+      - id
+      - kind
+      - statement
+      - source
+      - truth_status
+      - evidence
+      - decision_owner
+      - change_policy
+      - retrieval_tier
+      - scope
+      - relationships
+      - change_cost
+      - revisit_when
+      - lifecycle_status
+    properties:
+      id:
+        type: string
+        pattern: "^(C|A|D|K|Q)-[A-Za-z0-9-]+$"
+      kind:
+        enum: [constraint, assumption, decision_reference, design_fact, quality_preference]
+      statement:
+        type: string
+        minLength: 1
+        description: Display statement; canonical_ref remains authoritative for references and facts.
+      source:
+        type: object
+        additionalProperties: false
+        required: [type, ref]
+        properties:
+          type:
+            enum: [user_request, external_protocol, code, test, accepted_design, agent_inference, historical_implementation, other]
+          ref: {type: string, minLength: 1}
+          original_excerpt: {type: string}
+      truth_status:
+        enum: [confirmed, assumed, disputed, invalidated, not_applicable]
+      evidence:
+        type: array
+        items: {type: string, minLength: 1}
+        uniqueItems: true
+      decision_owner:
+        type: string
+        minLength: 1
+        description: Person or role authorized to change the decision; use "none" for observations.
+      change_policy:
+        enum: [user_confirmation_required, maintainer_approval_required, migration_required, freely_revisable, read_only]
+      retrieval_tier:
+        enum: [active, reference, retired]
+      decision_status:
+        enum: [proposed, accepted, superseded, rejected]
+      preference_status:
+        enum: [unconfirmed, confirmed, rejected]
+      canonical_ref:
+        type: string
+        minLength: 1
+        description: Required for decision_reference and design_fact; prevents duplicate authority.
+      scope:
+        type: array
+        items: {type: string, minLength: 1}
+        uniqueItems: true
+      relationships:
+        type: object
+        additionalProperties: false
+        required: [derived_from, affects, supersedes]
+        properties:
+          derived_from: {$ref: "#/$defs/idArray"}
+          affects: {$ref: "#/$defs/idArray"}
+          supersedes: {$ref: "#/$defs/idArray"}
+      change_cost:
+        enum: [low, medium, high, unknown]
+      revisit_when:
+        type: array
+        items: {type: string, minLength: 1}
+        uniqueItems: true
+      lifecycle_status:
+        enum: [active, resolved, invalidated, expired, superseded]
+      lifecycle_reason:
+        type: string
+    allOf:
+      - if:
+          properties:
+            kind: {enum: [decision_reference, design_fact]}
+        then:
+          required: [canonical_ref]
+      - if:
+          properties:
+            kind: {const: decision_reference}
+        then:
+          required: [decision_status]
+      - if:
+          properties:
+            kind: {const: quality_preference}
+        then:
+          required: [preference_status]

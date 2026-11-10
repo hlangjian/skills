@@ -1,0 +1,135 @@
+schema_version: "0.1"
+records:
+  - id: C-004
+    kind: constraint
+    statement: Existing payment API must remain backward compatible.
+    source:
+      type: external_protocol
+      ref: docs/contracts/payment-api-v3.md
+      original_excerpt: "Existing v3 clients must continue to operate without request changes."
+    truth_status: confirmed
+    evidence:
+      - public_api_contract
+      - external_client_usage
+    decision_owner: project_maintainer
+    change_policy: migration_required
+    retrieval_tier: active
+    scope:
+      - payment/public_api
+    relationships:
+      derived_from: []
+      affects:
+        - D-002
+      supersedes: []
+    change_cost: high
+    revisit_when:
+      - A versioned API migration is approved.
+    lifecycle_status: active
+
+  - id: A-003
+    kind: assumption
+    statement: Refund is initially assumed to support full refunds only.
+    source:
+      type: agent_inference
+      ref: CHG-0042
+    truth_status: assumed
+    evidence: []
+    decision_owner: user
+    change_policy: user_confirmation_required
+    retrieval_tier: active
+    scope:
+      - payment/refund
+    relationships:
+      derived_from: []
+      affects:
+        - D-002
+        - D-005
+      supersedes: []
+    change_cost: unknown
+    revisit_when:
+      - Partial or multiple refund requirements appear.
+      - The payment domain is redesigned.
+    lifecycle_status: active
+
+  - id: D-002
+    kind: decision_reference
+    statement: Refund has an independent lifecycle from Order.
+    source:
+      type: accepted_design
+      ref: docs/design/decisions/ADR-012.md
+    truth_status: not_applicable
+    evidence:
+      - implementation-check-104
+    decision_owner: system_architect
+    change_policy: maintainer_approval_required
+    retrieval_tier: active
+    decision_status: accepted
+    canonical_ref: docs/design/decisions/ADR-012.md
+    scope:
+      - payment/refund
+      - order
+    relationships:
+      derived_from:
+        - A-003
+      affects:
+        - payment/refund
+      supersedes: []
+    change_cost: high
+    revisit_when:
+      - Refund and order lifecycles no longer differ materially.
+    lifecycle_status: active
+
+  - id: K-001
+    kind: design_fact
+    statement: Order owns order lifecycle; Refund owns refund policy and execution.
+    source:
+      type: accepted_design
+      ref: docs/design/current-model.md#K-001
+    truth_status: confirmed
+    evidence:
+      - implementation-check-104
+    decision_owner: system_architect
+    change_policy: maintainer_approval_required
+    retrieval_tier: active
+    canonical_ref: docs/design/current-model.md#K-001
+    scope:
+      - payment/refund
+      - order
+    relationships:
+      derived_from:
+        - D-002
+      affects:
+        - payment/refund
+        - order/refund_integration
+      supersedes: []
+    change_cost: medium
+    revisit_when:
+      - The accepted responsibility boundary changes.
+    lifecycle_status: active
+
+  - id: Q-001
+    kind: quality_preference
+    statement: Prefer responsibility boundaries that follow distinct business lifecycles, without mechanically splitting classes.
+    source:
+      type: user_request
+      ref: conversation://feedback-029
+      original_excerpt: "For payment and order work, prefer boundaries that follow real business lifecycles; do not split classes just to make them smaller."
+    truth_status: not_applicable
+    evidence:
+      - CHG-0042
+    decision_owner: user
+    change_policy: user_confirmation_required
+    retrieval_tier: active
+    preference_status: confirmed
+    scope:
+      - payment
+      - order
+    relationships:
+      derived_from: []
+      affects:
+        - D-002
+      supersedes: []
+    change_cost: unknown
+    revisit_when:
+      - The human gives conflicting or more specific design feedback.
+    lifecycle_status: active

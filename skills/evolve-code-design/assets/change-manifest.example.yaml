@@ -1,0 +1,167 @@
+change_id: CHG-0042
+title: Separate refund policy from order lifecycle
+intent:
+  source_ref: issue://PAY-142
+  original_request: "Support refunds without changing the public payment API."
+  agent_interpretation: "Model refund policy independently while preserving current refund behavior."
+  unresolved_questions:
+    - "Should partial refunds be supported in a later change?"
+human_inputs:
+  - type: goal
+    expression_strength: explicit_request
+    source_ref: issue://PAY-142
+    original_statement: "Support refunds without changing the public payment API."
+    agent_interpretation: "Improve refund support while preserving the API contract."
+    interpretation_status: confirmed
+  - type: constraint
+    expression_strength: explicit_request
+    source_ref: issue://PAY-142
+    original_statement: "without changing the public payment API"
+    agent_interpretation: "The public API is outside the authorized change scope."
+    interpretation_status: confirmed
+    scope:
+      - payment/public_api
+change_class: independent_refactor
+authorization_level: independent_refactor
+plan_revision: design-v2
+participation:
+  mode: approval
+  human_decision_needed:
+    - "Choose the refund responsibility boundary."
+    - "Authorize internal implementation without API or schema changes."
+scope:
+  authorized:
+    - payment/refund
+    - order/refund_integration
+  proposed:
+    - payment/partial_refund_model
+  forbidden:
+    - payment/public_api
+    - database_schema
+risk_operations: []
+references:
+  requirements:
+    - issue://PAY-142
+  knowledge:
+    - A-003
+    - C-004
+  decisions:
+    - D-002
+invariants:
+  - Existing full-refund behavior remains unchanged.
+  - Existing payment API remains backward compatible.
+assumptions:
+  - A-003
+design_proposal:
+  revision: design-v2
+  current_design: "OrderManager coordinates order lifecycle, refund policy, and payment-channel calls."
+  structure_view: |-
+    Current: OrderManager → order lifecycle + refund policy + payment coordination
+    Option A: OrderManager → coordination; RefundPolicy → rules
+    Option B: Order → order lifecycle; Refund → refund lifecycle and rules; Payment → channel coordination
+  identified_problems:
+    - "Order and refund have different lifecycles but share one mutable coordination object."
+    - "Adding refund rules requires editing unrelated order workflows."
+  alternatives:
+    - id: A
+      summary: "Keep OrderManager and extract only a pure refund policy function."
+      benefits:
+        - "Small migration and low regression risk."
+      costs:
+        - "OrderManager still owns refund coordination."
+      migration_cost: "Low; internal function extraction only."
+    - id: B
+      summary: "Model Refund independently and leave Order responsible for order lifecycle."
+      benefits:
+        - "Concepts and lifecycles are easier to explain and test independently."
+      costs:
+        - "Requires changes to internal collaborators."
+      migration_cost: "Medium; no public API or database change."
+  recommendation:
+    alternative_id: B
+    rationale: "It addresses the lifecycle mismatch rather than only reducing method size."
+  human_decision_needed:
+    - "Is independent Refund the preferred project direction?"
+    - "May the agent modify the two listed internal modules?"
+design_feedback:
+  - target: payment/refund
+    impact: concept_boundary
+    source_ref: conversation://feedback-021
+    original_statement: "This design feels unnecessarily complicated."
+    sentiment: negative
+    agent_interpretation: "Possible lifecycle mixing and excessive coordination through OrderManager."
+    interpretation_status: confirmed
+    resolution_status: addressed
+consultations:
+  - question: "Should refund become an independent lifecycle concept?"
+    reason: "This affects product-model semantics and future refund evolution."
+    investigated:
+      - "Current order and refund state transitions."
+      - "Existing public API and persistence constraints."
+    options:
+      - "Extract only a policy function."
+      - "Introduce an independent Refund concept."
+    recommendation: "Introduce Refund without changing public contracts."
+    default_without_answer: "Keep current behavior and make no structural change."
+    status: answered
+    answer_ref: conversation://approval-018
+authorizations:
+  - kind: design_acceptance
+    status: approved
+    approver: product_owner
+    approver_type: human
+    source_ref: conversation://approval-018
+    original_statement: "Option B is the more natural model."
+    plan_revision: design-v2
+    scope:
+      - payment/refund
+      - order/refund_integration
+    conditions:
+      - Existing refund behavior remains unchanged.
+  - kind: implementation
+    status: approved
+    approver: project_maintainer
+    approver_type: human
+    source_ref: conversation://approval-019
+    original_statement: "Implement option B internally, but do not change the API or database."
+    plan_revision: design-v2
+    scope:
+      - payment/refund
+      - order/refund_integration
+    conditions:
+      - public_api_unchanged
+      - database_schema_unchanged
+validation:
+  baseline_revision: a94c210
+  target_revision: c81f92e
+  required:
+    - unit_tests
+    - api_compatibility
+  evidence:
+    - name: unit_tests
+      status: passed
+      revision: c81f92e
+      evidence_ref: ci://runs/9182
+      limitations: []
+    - name: api_compatibility
+      status: passed_with_limitations
+      revision: c81f92e
+      evidence_ref: ci://runs/9183
+      limitations:
+        - External consumer replay covers only the two known clients.
+execution:
+  status: Completed
+  rework_target: null
+  waiting_for: null
+  authorization_kind: null
+documentation_impact:
+  current_model: required
+  adr: proposed
+  knowledge_records: required
+  reason: The accepted responsibility boundary changed and one product assumption remains open.
+reflection:
+  outcome: propose
+  summary: The refund lifecycle is clearer as an independent concept; partial refunds remain a separately authorized evolution.
+  new_evidence:
+    - Refund and order cancellation now demonstrate different lifecycles in integration tests.
+  stop_reason: Current change is verified; partial-refund design requires new product clarification.

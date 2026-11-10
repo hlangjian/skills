@@ -1,0 +1,249 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://example.local/schemas/change-manifest-v0.1.schema.yaml"
+title: Change Manifest v0.1 with Human Participation
+type: object
+additionalProperties: false
+required:
+  - change_id
+  - title
+  - intent
+  - human_inputs
+  - change_class
+  - authorization_level
+  - plan_revision
+  - participation
+  - scope
+  - risk_operations
+  - invariants
+  - assumptions
+  - authorizations
+  - validation
+  - execution
+  - documentation_impact
+properties:
+  change_id: {type: string, pattern: "^CHG-[A-Za-z0-9-]+$"}
+  title: {type: string, minLength: 1}
+  intent:
+    type: object
+    additionalProperties: false
+    required: [source_ref, original_request, agent_interpretation, unresolved_questions]
+    properties:
+      source_ref: {type: string, minLength: 1}
+      original_request:
+        type: string
+        minLength: 1
+        description: Verbatim request or excerpt, never the agent's paraphrase.
+      agent_interpretation: {type: string}
+      unresolved_questions: {$ref: "#/$defs/stringArray"}
+  human_inputs:
+    type: array
+    items: {$ref: "#/$defs/humanInput"}
+  change_class:
+    enum: [feature, bug_fix, local_refactor, independent_refactor, architecture]
+    description: Task nature; does not determine authorization by itself.
+  authorization_level:
+    enum: [local, independent_refactor, architecture]
+    description: Action authority derived from scope, impact, and risk.
+  plan_revision:
+    type: string
+    minLength: 1
+    description: Changes when the approved design or execution plan materially changes.
+  participation:
+    type: object
+    additionalProperties: false
+    required: [mode, human_decision_needed]
+    properties:
+      mode: {enum: [delegation, consultation, approval]}
+      human_decision_needed: {$ref: "#/$defs/stringArray"}
+  scope:
+    type: object
+    additionalProperties: false
+    required: [authorized, proposed, forbidden]
+    properties:
+      authorized: {$ref: "#/$defs/stringArray"}
+      proposed: {$ref: "#/$defs/stringArray"}
+      forbidden: {$ref: "#/$defs/stringArray"}
+  risk_operations:
+    type: array
+    uniqueItems: true
+    items:
+      enum: [database_migration, compatibility_change, production_operation, security_change]
+  references:
+    type: object
+    additionalProperties: false
+    properties:
+      requirements: {$ref: "#/$defs/stringArray"}
+      knowledge: {$ref: "#/$defs/stringArray"}
+      decisions: {$ref: "#/$defs/stringArray"}
+  invariants: {$ref: "#/$defs/stringArray"}
+  assumptions:
+    type: array
+    items: {type: string, pattern: "^A-[A-Za-z0-9-]+$"}
+    uniqueItems: true
+  design_proposal: {$ref: "#/$defs/designProposal"}
+  design_feedback:
+    type: array
+    items: {$ref: "#/$defs/designFeedback"}
+  consultations:
+    type: array
+    items: {$ref: "#/$defs/consultation"}
+  authorizations:
+    type: array
+    items: {$ref: "#/$defs/authorization"}
+  validation:
+    type: object
+    additionalProperties: false
+    required: [required, evidence]
+    properties:
+      baseline_revision: {type: [string, "null"]}
+      target_revision: {type: [string, "null"]}
+      required: {$ref: "#/$defs/stringArray"}
+      evidence:
+        type: array
+        items: {$ref: "#/$defs/verificationEvidence"}
+  execution:
+    type: object
+    additionalProperties: false
+    required: [status, rework_target, waiting_for, authorization_kind]
+    properties:
+      status:
+        enum: [Proposed, Planned, Authorized, Implementing, Validating, Completed, Blocked]
+      rework_target:
+        enum: [Proposed, Planned, Authorized, Implementing, Validating, null]
+      waiting_for:
+        enum: [consultation, authorization, external_dependency, environment, technical_resolution, other, null]
+      authorization_kind:
+        enum: [design_acceptance, implementation, migration, compatibility_change, production_operation, security_change, null]
+      blocked_reason: {type: string}
+  documentation_impact: {$ref: "#/$defs/documentationImpact"}
+  reflection:
+    type: object
+    additionalProperties: false
+    required: [outcome, new_evidence]
+    properties:
+      outcome: {enum: [keep, observe, propose]}
+      summary: {type: string}
+      new_evidence: {$ref: "#/$defs/stringArray"}
+      stop_reason: {type: string}
+$defs:
+  stringArray:
+    type: array
+    items: {type: string, minLength: 1}
+    uniqueItems: true
+  humanInput:
+    type: object
+    additionalProperties: false
+    required: [type, expression_strength, source_ref, original_statement, agent_interpretation, interpretation_status]
+    properties:
+      type: {enum: [goal, constraint, authorization, quality_preference]}
+      expression_strength: {enum: [exploration, suggestion, explicit_request, formal_approval]}
+      source_ref: {type: string, minLength: 1}
+      original_statement: {type: string, minLength: 1}
+      agent_interpretation: {type: string}
+      interpretation_status: {enum: [unconfirmed, confirmed, rejected]}
+      scope: {$ref: "#/$defs/stringArray"}
+  designProposal:
+    type: object
+    additionalProperties: false
+    required: [revision, current_design, identified_problems, alternatives, recommendation, human_decision_needed]
+    properties:
+      revision: {type: string, minLength: 1}
+      current_design: {type: string, minLength: 1}
+      structure_view:
+        type: string
+        description: Optional compact tree, responsibility table, or relationship view for human evaluation.
+      identified_problems: {$ref: "#/$defs/stringArray"}
+      alternatives:
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          required: [id, summary, benefits, costs, migration_cost]
+          properties:
+            id: {type: string, minLength: 1}
+            summary: {type: string, minLength: 1}
+            benefits: {$ref: "#/$defs/stringArray"}
+            costs: {$ref: "#/$defs/stringArray"}
+            migration_cost: {type: string, minLength: 1}
+      recommendation:
+        type: object
+        additionalProperties: false
+        required: [alternative_id, rationale]
+        properties:
+          alternative_id: {type: string, minLength: 1}
+          rationale: {type: string, minLength: 1}
+      human_decision_needed: {$ref: "#/$defs/stringArray"}
+  designFeedback:
+    type: object
+    additionalProperties: false
+    required: [target, impact, source_ref, original_statement, sentiment, agent_interpretation, interpretation_status, resolution_status]
+    properties:
+      target: {type: string, minLength: 1}
+      impact:
+        enum: [local_expression, responsibility_boundary, abstraction_boundary, concept_boundary, architecture]
+      source_ref: {type: string, minLength: 1}
+      original_statement: {type: string, minLength: 1}
+      sentiment: {enum: [negative, positive, mixed, neutral]}
+      agent_interpretation: {type: string}
+      interpretation_status: {enum: [unconfirmed, confirmed, rejected]}
+      resolution_status: {enum: [investigating, addressed, deferred, rejected]}
+  consultation:
+    type: object
+    additionalProperties: false
+    required: [question, reason, investigated, options, recommendation, default_without_answer, status, answer_ref]
+    properties:
+      question: {type: string, minLength: 1}
+      reason: {type: string, minLength: 1}
+      investigated: {$ref: "#/$defs/stringArray"}
+      options: {$ref: "#/$defs/stringArray"}
+      recommendation: {type: string}
+      default_without_answer: {type: string, minLength: 1}
+      status: {enum: [pending, answered, skipped]}
+      answer_ref: {type: [string, "null"]}
+  authorization:
+    type: object
+    additionalProperties: false
+    required: [kind, status, approver, approver_type, source_ref, original_statement, plan_revision, scope, conditions]
+    properties:
+      kind:
+        enum: [design_acceptance, implementation, migration, compatibility_change, production_operation, security_change]
+      status: {enum: [pending, approved, rejected, expired]}
+      approver: {type: [string, "null"]}
+      approver_type: {enum: [human, agent, system, unknown]}
+      source_ref: {type: [string, "null"]}
+      original_statement: {type: string}
+      plan_revision: {type: string, minLength: 1}
+      scope: {$ref: "#/$defs/stringArray"}
+      conditions: {$ref: "#/$defs/stringArray"}
+  verificationEvidence:
+    type: object
+    additionalProperties: false
+    required: [name, status, revision, evidence_ref, limitations]
+    properties:
+      name: {type: string, minLength: 1}
+      status:
+        enum: [passed, failed, not_run, inconclusive, passed_with_limitations]
+      revision: {type: string, minLength: 1}
+      evidence_ref: {type: string, minLength: 1}
+      limitations:
+        type: array
+        items: {type: string}
+        uniqueItems: true
+  documentationImpact:
+    type: object
+    additionalProperties: false
+    required: [current_model, adr, knowledge_records, reason]
+    properties:
+      current_model: {enum: [required, not_required]}
+      adr: {enum: [required, proposed, not_required]}
+      knowledge_records: {enum: [required, not_required]}
+      reason: {type: string}
+allOf:
+  - if:
+      properties:
+        execution:
+          properties:
+            status: {const: Completed}
+      required: [execution]
+    then:
+      required: [reflection]
