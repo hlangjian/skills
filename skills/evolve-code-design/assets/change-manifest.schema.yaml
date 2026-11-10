@@ -1,6 +1,6 @@
 $schema: "https://json-schema.org/draft/2020-12/schema"
 $id: "https://example.local/schemas/change-manifest-v0.1.schema.yaml"
-title: Change Manifest v0.1 with Human Participation
+title: Change Manifest v0.1 with Autonomous Agent Groups and Dynamic Human Participation
 type: object
 additionalProperties: false
 required:
@@ -12,6 +12,7 @@ required:
   - authorization_level
   - plan_revision
   - participation
+  - required_human_authorizations
   - scope
   - risk_operations
   - invariants
@@ -38,12 +39,13 @@ properties:
   human_inputs:
     type: array
     items: {$ref: "#/$defs/humanInput"}
+    description: Optional human input; an empty list is valid for fully agent-originated work.
   change_class:
     enum: [feature, bug_fix, local_refactor, independent_refactor, architecture]
     description: Task nature; does not determine authorization by itself.
   authorization_level:
     enum: [local, independent_refactor, architecture]
-    description: Action authority derived from scope, impact, and risk.
+    description: Action authority derived from scope, impact, and risk, not from human presence.
   plan_revision:
     type: string
     minLength: 1
@@ -51,10 +53,18 @@ properties:
   participation:
     type: object
     additionalProperties: false
-    required: [mode, human_decision_needed]
+    required: [mode, external_decisions]
     properties:
-      mode: {enum: [delegation, consultation, approval]}
-      human_decision_needed: {$ref: "#/$defs/stringArray"}
+      mode: {enum: [autonomous, collaborative, approval]}
+      external_decisions:
+        $ref: "#/$defs/stringArray"
+        description: Optional external input or decisions; empty when agents can proceed autonomously.
+  required_human_authorizations:
+    type: array
+    uniqueItems: true
+    items:
+      enum: [design_acceptance, implementation, migration, compatibility_change, production_operation, security_change]
+    description: Reserved decisions only. Empty means no human approval is inherently required.
   scope:
     type: object
     additionalProperties: false
@@ -145,13 +155,13 @@ $defs:
   designProposal:
     type: object
     additionalProperties: false
-    required: [revision, current_design, identified_problems, alternatives, recommendation, human_decision_needed]
+    required: [revision, current_design, identified_problems, alternatives, recommendation, evaluation_points]
     properties:
       revision: {type: string, minLength: 1}
       current_design: {type: string, minLength: 1}
       structure_view:
         type: string
-        description: Optional compact tree, responsibility table, or relationship view for human evaluation.
+        description: Optional compact tree, responsibility table, or relationship view for agent or human evaluation.
       identified_problems: {$ref: "#/$defs/stringArray"}
       alternatives:
         type: array
@@ -172,7 +182,9 @@ $defs:
         properties:
           alternative_id: {type: string, minLength: 1}
           rationale: {type: string, minLength: 1}
-      human_decision_needed: {$ref: "#/$defs/stringArray"}
+      evaluation_points:
+        $ref: "#/$defs/stringArray"
+        description: Questions for agent-group review and, when present, human evaluation; not inherently approval requests.
   designFeedback:
     type: object
     additionalProperties: false

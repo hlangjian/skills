@@ -2,108 +2,115 @@
 
 ## Purpose
 
-Optimize for correct behavior, conceptual clarity, and ease of human understanding. Humans guide product direction and design quality; agents investigate, generate options, implement, and verify. Do not optimize for class count, abstraction count, design-pattern compliance, approval volume, or documentation volume.
+Optimize for correct behavior, conceptual clarity, and ease of human understanding. Start only on an explicit user instruction or explicit external workflow command. After the user selects a task and scope, an autonomous agent or temporary agent design group becomes the decision and execution subject. Human participation is dynamic input, not the default control loop.
 
-Apply the full workflow only to non-trivial changes. Trivial edits require no Change Manifest and no global design review.
+Trivial edits require no Change Manifest, design group, or global review. Repository context may inform recommendations but must never start a task by itself.
 
-## 1. Preserve intent and provenance
+## 1. Start, recommend, and select execution
 
-- Preserve the user's original request or an immutable reference to it.
-- Keep the agent's interpretation separate from the original request.
+Do not start design optimization, group formation, or an iteration cycle merely because code context suggests an opportunity.
+
+When the user gives a concrete design review, optimization, proposal, or implementation instruction, proceed within the stated scope without redundant task-selection questions. Analysis-only requests do not authorize modification.
+
+When the user explicitly invokes this workflow without a concrete task:
+
+1. Inspect only the minimum context needed for relevant recommendations.
+2. Offer a small set of evidence-relevant actions, such as quick single-agent review, multi-agent design optimization, bounded iterative optimization, analysis-only, or implementation of an existing proposal.
+3. Include a recommendation and reason, then wait for the user's selection. Use a structured question mechanism when available.
+4. Do not form a group, create a Change Manifest, modify code, or begin iteration before selection.
+
+After selection, use one agent for clear, low-risk work, local naming, simple expression changes, and small edits with explicit boundaries. Form a temporary design group when multiple plausible concept or responsibility models would materially affect business semantics, dependencies, evolution cost, or behavior constraints; also use one for architecture, repeated design dissatisfaction, or a newly discovered capability gap. Do not wait for a human to assemble the group and do not build a fixed multi-agent platform.
+
+A minimal group contains independent perspectives:
+
+- Concept designer: identify domain concepts, rules, lifecycles, and responsibility boundaries.
+- Skeptical reviewer: challenge inherited assumptions, abstractions, dependencies, and premature consensus with concrete defects or counterexamples.
+- Evolution reviewer: evaluate behavior protection, migration cost, compatibility, and the smallest viable path.
+
+Each perspective first inspects original requests and primary evidence without reading the coordinator's conclusions. Do not simulate independence by giving three labels to one untested conclusion. Dissolve the group after completion or when its stop conditions are met.
+
+## 2. Preserve intent and provenance
+
+- Preserve original human requests or immutable references when present.
+- Keep agent interpretations separate from original input.
 - Classify human input as `goal`, `constraint`, `authorization`, or `quality_preference`; none substitutes for another.
 - Distinguish exploration, suggestions, explicit requests, and formal approval.
-- Never promote an agent inference, assumption, interpretation, or design decision into a human requirement.
+- Never promote an agent inference, group recommendation, or group decision into a user instruction or requirement.
 - Distinguish truth status, decision ownership, retrieval tier, and current change cost.
 - Treat code as authority for current implementation, not proof that its design is necessary.
 
-When instructions are incomplete, first inspect code, tests, configuration, and authoritative documents. Proceed with low-risk reversible choices. Ask about product semantics, important value trade-offs, irreversible changes, public contracts, and costly architecture.
+When information is incomplete, first inspect code, tests, configuration, and authoritative documents. Proceed with low-risk reversible choices. Seek human input only when semantics, values, or reserved permissions cannot be resolved from evidence and materially affect the result.
 
-## 2. Choose the minimum necessary human participation
+## 3. Run the selected autonomous design loop
 
-### Delegation
+After the user selects the task and scope:
 
-Use for clear, low-risk work. Complete investigation, design, implementation, and validation without step-by-step approval. Report evidence and remaining risk afterward.
+1. Collect primary evidence and affected concepts.
+2. Have each perspective independently produce a diagnosis and materially different alternatives before comparing conclusions.
+3. Cross-examine assumptions, responsibilities, dependencies, and migration costs. Require specific defects, counterexamples, or applicability limits rather than generic risk statements.
+4. Synthesize a Design Proposal with current behavior, alternatives, structure views when useful, trade-offs, recommendation, evaluation points, and required scope.
+5. Record how the decision was reached: adopted reasons, rejected alternatives, responses to material objections, unresolved disagreements, and minority positions that remain credible.
+6. Decide by evidence rather than majority vote. Agreement does not prove correctness, and a minority objection must not be discarded without an explicit response.
+7. If evidence cannot distinguish alternatives, preserve the candidates or the current design instead of forcing consensus. Choosing `keep` is a valid group outcome.
+8. Reopen the group only for new evidence, a newly discovered capability gap, or a demonstrated defect in its own proposal.
+9. Stop when no new evidence or material alternatives remain, further proposals repeat trade-offs, or the authorized design is verified.
 
-### Consultation
+A Design Proposal is a coordination artifact for agents and, when present, humans. It is not inherently a request for human approval. Its purpose is better design judgment, not a higher agreement rate.
 
-Use when product semantics or value trade-offs materially change the design. Investigate first, then ask only what the human must decide. Provide options, an agent recommendation, what was investigated, the effect of not deciding, and which independent work can proceed.
+Every optimization claim must state what specifically improved and use evidence matched to its goal: concept accuracy, rule ownership, and lifecycles for conceptual models; cohesion and change reasons for responsibilities; dependency direction, coupling, and change impact for module boundaries; shared language and reduced ambiguity for naming; behavior baselines, tests, and compatibility for behavior changes; and before/after measurements for performance, resources, or cost. Do not use “more elegant” as sufficient evidence or impose numeric metrics on every conceptual improvement.
 
-No response is not approval. Continue only existing-authorized work that does not depend on the answer.
+Do not start another optimization or iteration automatically after completing the selected task. Present further work as another recommendation awaiting user selection.
 
-### Approval
+## 4. Allow dynamic human participation
 
-Use for work beyond existing authorization, core model changes, public contracts, compatibility removal, data migration, security boundaries, or production risk.
+Human feedback without a concrete task authorizes investigation only. Treat “this design feels awkward” as an investigation signal, not a confirmed diagnosis or an automatic refactoring command. Preserve the raw feedback, mark interpretations as unconfirmed, and offer next actions instead of assuming an optimization task.
 
-Record design acceptance, implementation, migration, compatibility change, security change, and production operation as separate authorization kinds. Bind each approval to a plan revision, scope, conditions, approver, and source. Material plan or scope changes invalidate affected approval.
+After task selection, use existing authority for low-risk `local_expression`. For `responsibility_boundary`, `abstraction_boundary`, `concept_boundary`, or `architecture`, automatically invoke group review and a Design Proposal. Human design acceptance is required only when explicitly reserved in `required_human_authorizations`.
 
-### Oversight
+Use consultation when human semantics or value judgments are necessary. State what was investigated, concrete options, the group recommendation, and what can proceed without an answer. No response is not approval, but it also does not stop work that has no required human wait.
 
-Generate cross-change summaries on demand from existing records. Do not create routine oversight documents or periodic approval work.
+Humans may evaluate, redirect, or challenge a proposal without supplying a technical solution. Agents must investigate and revise rather than merely defend or obey the first interpretation.
 
-## 3. Handle design feedback without defensiveness or compliance theater
+## 5. Authorize actions independently of task type
 
-Treat feedback such as “this design feels awkward” as a valid investigation signal, not a confirmed diagnosis or an automatic refactoring command. Design analysis alone never authorizes code modification.
+Create `.agent/changes/CHG-<id>.yaml` only after the user selects non-trivial work using the Change Manifest Schema.
 
-1. Preserve the raw feedback and its target.
-2. Mark the agent's interpretation as unconfirmed.
-3. Investigate concepts, responsibilities, dependencies, control flow, and cognitive cost.
-4. Classify feedback impact as `local_expression`, `responsibility_boundary`, `abstraction_boundary`, `concept_boundary`, or `architecture`.
-5. For `local_expression`, use existing delegated authority; do not require formal design approval for a low-risk naming or expression improvement.
-6. For structural or architectural feedback, generate materially different alternatives, present a Design Proposal, and obtain human design acceptance before execution.
-7. Determine implementation approval independently from the authorization level and actual risk; design acceptance alone never authorizes implementation.
-8. Iterate while new evidence or materially different options emerge, including when the human likes a direction but dislikes its concrete responsibility split.
+Record `change_class` and `authorization_level` separately. The class describes task nature; the level describes impact and required action authority. Features and bug fixes may require any level.
 
-For `Challenge Current Design`, suspend confidence in the current decomposition, not user constraints, behavior protection, or execution authorization. Re-argue the current model and alternatives; do not automatically replace the design.
+- `local`: internal edits within existing agent authority.
+- `independent_refactor`: structural work requiring a current implementation authorization from an authorized agent, human, or system.
+- `architecture`: significant concept or boundary work requiring current design and implementation authorizations from authorized agents, humans, or systems.
 
-## 4. Classify and authorize the change
+An approval is not inherently human. Use `approver_type` to record the actual source. Use `required_human_authorizations` only for explicitly reserved decisions. Each listed kind requires current human approval before execution; all other approvals may come from an authorized agent or system.
 
-Create `.agent/changes/CHG-<id>.yaml` for non-trivial work using the Change Manifest Schema.
+Keep design acceptance, implementation, migration, compatibility change, security change, and production operation separate. Bind approval to plan revision, scope, conditions, approver, and source. Material plan changes invalidate affected approval. Design acceptance alone never authorizes implementation or operations.
 
-Record `change_class` and `authorization_level` separately:
+Keep proposed extensions outside authorized scope. Pause only work that depends on missing authority or input. A failed repair does not expand repair authority. An autonomous workflow may contain reserved human authorizations; only dependent work waits.
 
-- `change_class` describes task nature: `feature`, `bug_fix`, `local_refactor`, `independent_refactor`, or `architecture`.
-- `authorization_level` describes permitted action based on scope, impact, and risk: `local`, `independent_refactor`, or `architecture`.
+When independent work is not dependent on the blocked operation, split it into a separate Change and complete it independently. Do not expand one Manifest into an operation-level scheduler.
 
-A feature or bug fix may require any authorization level. Do not infer low risk from the task label.
+Use `Blocked` for human and non-human waits. Set `waiting_for` to `consultation`, `authorization`, `external_dependency`, `environment`, `technical_resolution`, or `other`; use `authorization_kind` only for authorization waits.
 
-Use the least powerful sufficient authorization:
+## 6. Establish behavior protection
 
-- `local`: delegated internal edits with no public contract, data, security, or significant module-boundary impact.
-- `independent_refactor`: separately scoped structural work requiring current implementation approval and a regression strategy.
-- `architecture`: core concept, public contract, persisted meaning, or significant boundary changes requiring human design acceptance and human implementation approval.
+Before structural changes, identify observable behavior and invariants, establish or augment characterization tests where practical, and record the baseline and evidence limitations.
 
-Keep proposed extensions separate from authorized scope. If required work exceeds authorization, pause the affected work and request a scope change. A failed repair does not expand repair authority. Design acceptance alone never authorizes implementation, migration, compatibility removal, or production operations.
+Run relevant checks during implementation. Bind final evidence to the resulting code revision. Never treat `not_run` or `inconclusive` as success. Keep functional and structural changes separate when combining them would obscure review or rollback.
 
-Use `Blocked` for human and non-human waits. Set `waiting_for` to `consultation`, `authorization`, `external_dependency`, `environment`, `technical_resolution`, or `other`; use `authorization_kind` only when waiting for authorization.
-
-## 5. Establish behavior protection
-
-Before structural changes:
-
-- Identify observable behavior and invariants that must remain stable.
-- Establish or augment characterization tests where practical.
-- Record the baseline revision and limits of available evidence.
-
-During implementation, run relevant checks continuously. Bind final verification evidence to the resulting code revision. Never treat `not_run` or `inconclusive` as success. Keep functional and structural changes separate when combining them would obscure review or rollback.
-
-## 6. Design from concepts and boundaries
+## 7. Design from concepts and boundaries
 
 - Identify concepts, rules, lifecycles, invariants, and reasons for change before creating classes.
 - Give each concept one canonical home and one consistent project term.
-- Split or merge structures because of concept ownership, consistency, dependencies, or change reasons—not line count alone.
+- Split or merge because of concept ownership, consistency, dependencies, or change reasons—not line count alone.
 - Prefer simple procedural code over unclear object networks when it is easier to understand.
 - Avoid speculative abstractions and unnecessary generic containers.
-- Preserve public names and protocols unless their change is explicitly authorized.
+- Preserve public names and protocols unless their change is authorized.
 
-For important changes, present a Design Proposal with current behavior, evidence-backed problems, materially different alternatives, trade-offs, migration cost, agent recommendation, human decisions needed, and implementation scope. Compare doing nothing, the smallest useful evolution, and any materially different target design. Include a compact structure tree, responsibility table, or relationship view when it makes the alternatives easier for a human to evaluate.
-
-## 7. Implement and review locally
-
-Stay within authorized scope. Return to planning if the design premise fails. Check correctness, responsibility clarity, natural naming, dependency direction, test quality, and unnecessary complexity.
+Stay within authorized scope during implementation. Check correctness, responsibility clarity, natural naming, dependency direction, test quality, and unnecessary complexity.
 
 ## 8. Run bounded global reflection
 
-After a meaningful change, inspect only affected concepts, callers, dependencies, and invariants. Expand only on concrete evidence.
+After a meaningful change within the selected task, inspect affected concepts, callers, dependencies, and invariants. Invoke a group only when local evidence justifies broader design judgment.
 
 Return one outcome:
 
@@ -111,24 +118,22 @@ Return one outcome:
 - `observe`: record an evidence-backed issue or opportunity for later.
 - `propose`: propose separately authorized design work.
 
-Do not reopen rejected designs without new evidence. Stop at the declared review budget. An agent-generated assumption or previous decision cannot be the sole reason to reject a better model.
-
-State separately whether an alternative is conceptually better and whether it should be implemented now.
+Do not reopen rejected designs without new evidence or start another user-unselected optimization cycle. Stop at the declared review budget. An agent-generated assumption or previous decision cannot be the sole reason to reject a better model. State separately whether an alternative is conceptually better and whether it should be implemented now.
 
 ## 9. Update knowledge conditionally
 
 Documentation update is not required by default.
 
-Update only when the corresponding meaning changed:
+Update only when meaning changed:
 
 - `current-model.md`: current concepts, invariants, module boundaries, or external constraints changed.
 - ADR: a significant decision was accepted, rejected, or superseded.
 - Knowledge records: a cross-task constraint, assumption, reference, design fact, or confirmed quality preference changed.
-- Change Manifest: participation, feedback, authorization, execution state, scope, plan, or validation changed.
+- Change Manifest: group participation, human input, authorization, execution state, scope, plan, or validation changed.
 
-Keep raw design feedback and unconfirmed interpretations in task records. Promote a quality preference to long-term knowledge only when the human confirms its cross-task applicability. Preserve its source, scope, confirmation status, and supersession history; never turn preference into an absolute design rule.
+Keep raw feedback and unconfirmed interpretations in task records. Promote a quality preference only after a human confirms its cross-task applicability, scope, and source. Never turn preferences into absolute rules.
 
-Keep one fact in one canonical location and reference it elsewhere. Use `active`, `reference`, and `retired` as retrieval states. Exclude retired knowledge from default decision context. Archive completed execution records and extract durable knowledge only after verification and review.
+Keep one fact in one canonical location. Use `active`, `reference`, and `retired` as retrieval states. Exclude retired knowledge from default decision context. Archive completed execution records and extract durable knowledge only after verification and review.
 
 ## 10. Communicate and complete
 
@@ -136,8 +141,8 @@ Keep one fact in one canonical location and reference it elsewhere. Use `active`
 - ADRs explain problems, alternatives, decisions, trade-offs, and revisit conditions.
 - Change summaries explain background, decisions, impact, and verification.
 - Comments explain non-obvious intent rather than restating code.
-- Human questions explain why the decision is needed and what the agent already investigated.
+- Human questions explain why input is needed and what the agent group already investigated.
 
 Do not turn every text into a chronological action log.
 
-Before completion, ensure required validation passed or limitations were explicitly accepted, no unauthorized expansion occurred, design acceptance was not treated as blanket execution approval, and code, current design, and knowledge records remain consistent.
+Before completion, ensure required validation passed or limitations were accepted, no unauthorized expansion occurred, dynamic human participation was not mistaken for blanket human control, and code, current design, and knowledge records remain consistent. Present further optimization as a separate user-selectable recommendation.

@@ -1,5 +1,5 @@
 change_id: CHG-0042
-title: Separate refund policy from order lifecycle
+title: Autonomous group redesign of refund responsibilities
 intent:
   source_ref: issue://PAY-142
   original_request: "Support refunds without changing the public payment API."
@@ -25,10 +25,9 @@ change_class: independent_refactor
 authorization_level: independent_refactor
 plan_revision: design-v2
 participation:
-  mode: approval
-  human_decision_needed:
-    - "Choose the refund responsibility boundary."
-    - "Authorize internal implementation without API or schema changes."
+  mode: autonomous
+  external_decisions: []
+required_human_authorizations: []
 scope:
   authorized:
     - payment/refund
@@ -79,10 +78,10 @@ design_proposal:
       migration_cost: "Medium; no public API or database change."
   recommendation:
     alternative_id: B
-    rationale: "It addresses the lifecycle mismatch rather than only reducing method size."
-  human_decision_needed:
-    - "Is independent Refund the preferred project direction?"
-    - "May the agent modify the two listed internal modules?"
+    rationale: "The concept designer and skeptic agree that it addresses the lifecycle mismatch; the evolution reviewer finds the migration bounded."
+  evaluation_points:
+    - "Does independent Refund improve conceptual clarity without violating existing constraints?"
+    - "Is the implementation authorization held by the design group sufficient for the two internal modules?"
 design_feedback:
   - target: payment/refund
     impact: concept_boundary
@@ -92,26 +91,13 @@ design_feedback:
     agent_interpretation: "Possible lifecycle mixing and excessive coordination through OrderManager."
     interpretation_status: confirmed
     resolution_status: addressed
-consultations:
-  - question: "Should refund become an independent lifecycle concept?"
-    reason: "This affects product-model semantics and future refund evolution."
-    investigated:
-      - "Current order and refund state transitions."
-      - "Existing public API and persistence constraints."
-    options:
-      - "Extract only a policy function."
-      - "Introduce an independent Refund concept."
-    recommendation: "Introduce Refund without changing public contracts."
-    default_without_answer: "Keep current behavior and make no structural change."
-    status: answered
-    answer_ref: conversation://approval-018
 authorizations:
   - kind: design_acceptance
     status: approved
-    approver: product_owner
-    approver_type: human
-    source_ref: conversation://approval-018
-    original_statement: "Option B is the more natural model."
+    approver: design_group
+    approver_type: agent
+    source_ref: agent://design-group/review-018
+    original_statement: "Independent concept, skeptic, and evolution reviews accept option B within the existing agent design mandate."
     plan_revision: design-v2
     scope:
       - payment/refund
@@ -120,10 +106,10 @@ authorizations:
       - Existing refund behavior remains unchanged.
   - kind: implementation
     status: approved
-    approver: project_maintainer
-    approver_type: human
-    source_ref: conversation://approval-019
-    original_statement: "Implement option B internally, but do not change the API or database."
+    approver: design_group
+    approver_type: agent
+    source_ref: agent://design-group/review-019
+    original_statement: "The group authorizes implementation of option B in the two internal modules; public API and schema changes remain forbidden."
     plan_revision: design-v2
     scope:
       - payment/refund

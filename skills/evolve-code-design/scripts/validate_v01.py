@@ -183,6 +183,7 @@ def validate_manifest_semantics(document):
     status = execution.get("status")
     authorization_level = document.get("authorization_level")
     plan_revision = document.get("plan_revision")
+    required_human = set(document.get("required_human_authorizations", []))
 
     for index, approval in enumerate(document.get("authorizations", [])):
         location = f"authorizations[{index}]"
@@ -239,12 +240,9 @@ def validate_manifest_semantics(document):
         if recommended not in alternative_ids:
             errors.append("design_proposal.recommendation.alternative_id: must reference an alternative")
 
-    if status in AUTHORIZED_STATES and (authorization_level == "architecture" or structural_feedback):
-        design_acceptance = current_approvals(document, "design_acceptance")
-        if not design_acceptance:
-            errors.append("authorizations: current human design_acceptance is required for structural feedback or architecture")
-        elif any(item.get("approver_type") != "human" for item in design_acceptance):
-            errors.append("authorizations: structural feedback or architecture design_acceptance requires a human approver")
+    if authorization_level == "architecture" and status in AUTHORIZED_STATES:
+        if not current_approvals(document, "design_acceptance"):
+            errors.append("authorizations: current design_acceptance is required for architecture-level work")
 
     if authorization_level in {"independent_refactor", "architecture"} and status in AUTHORIZED_STATES:
         implementation = current_approvals(document, "implementation")
@@ -256,19 +254,18 @@ def validate_manifest_semantics(document):
             if missing_scope:
                 errors.append(f"authorizations: implementation scope does not cover {sorted(missing_scope)}")
 
-    if authorization_level == "architecture" and status in AUTHORIZED_STATES:
-        implementation = current_approvals(document, "implementation")
-        if any(item.get("approver_type") != "human" for item in implementation):
-            errors.append("authorizations: architecture implementation requires a human approver")
-
     if status in AUTHORIZED_STATES:
         for operation in document.get("risk_operations", []):
             kind = RISK_AUTHORIZATION[operation]
+            if not current_approvals(document, kind):
+                errors.append(f"authorizations: {operation} requires current {kind} approval")
+
+        for kind in required_human:
             approvals = current_approvals(document, kind)
             if not approvals:
-                errors.append(f"authorizations: {operation} requires current {kind} approval")
+                errors.append(f"authorizations: reserved decision {kind} requires current human approval")
             elif any(item.get("approver_type") != "human" for item in approvals):
-                errors.append(f"authorizations: {operation} requires a human approver")
+                errors.append(f"authorizations: reserved decision {kind} requires a human approver")
 
     validation = document.get("validation", {})
     evidence = validation.get("evidence", [])
