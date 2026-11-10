@@ -19,6 +19,10 @@ When the user explicitly invokes this workflow without a concrete goal:
 
 The overall goal is selected once. Do not ask the user to select every subsequent work item, and do not expand into a new goal or system scope without another explicit instruction.
 
+After goal selection, perform a lightweight evidence triage. Enter targeted stabilization only when conflicting facts, unclear authority, unverifiable critical behavior, or unsafe change boundaries make optimization unsafe. Otherwise continue directly with discovery and prioritization. Do not require stabilization for every legacy project.
+
+When stabilization is required, read `references/legacy-stabilization.md`: execute relevant runtime checks where safe, establish evidence and conflict maps, define change impact and action boundaries, and stabilize only affected areas until they can safely support optimization. This is a targeted prerequisite, not whole-repository normalization.
+
 ## 2. Discover and prioritize opportunities autonomously
 
 Read `references/discovery-strategies.md`. Analyze the whole selected goal scope, including multiple modules or domains when authorized:
@@ -111,11 +115,15 @@ When independent work is not dependent on the blocked operation, split it into a
 
 ## 7. Verify improvements and reassess globally
 
+Before a significant modification, define a small Change Impact Map using `references/legacy-stabilization.md`: known callers, bypass paths, verified paths, unknown coverage, evidence confidence, change risk, allowed changes, and validation. Evidence confidence and change risk are independent; restrict irreversible or broad actions when either is unfavorable.
+
 Before structural changes, identify observable behavior and invariants, establish characterization tests where practical, and record baseline and evidence limitations. Bind final evidence to the resulting revision and never treat `not_run` or `inconclusive` as success.
 
 Every optimization claim must state what specifically improved and use matching evidence: concept accuracy, rule ownership, and lifecycles for conceptual models; cohesion and change reasons for responsibilities; dependency direction, coupling, and change impact for module boundaries; shared language and reduced ambiguity for naming; behavior baselines, tests, and compatibility for behavior changes; and before/after measurements for performance, resources, or cost.
 
 After meaningful work, reassess affected concepts, dependencies, invariants, and the opportunity map. Choose `keep`, `observe`, or `propose`. Use new evidence to revise the plan rather than defending earlier iterations.
+
+Run a micro-stabilization check for concept overlap, new rule or state owners, bypass paths, evidence validity, temporary-compatibility lifecycle, and whether the next agent can still find the correct entry point. Fix micro-disorder within the current work item when possible, pause only affected work for local stabilization when several work items are involved, and enter targeted stabilization only when facts or behavior become unsafe. Never expand a local finding into whole-repository refactoring.
 
 Default to sequential execution for dependent work. After integrating work items, repeat design-consistency and behavior verification rather than assuming independent success composes correctly. Later code changes invalidate affected prior evidence until revalidated. Pending asynchronous evaluation may remain unaccepted without preventing an evidence-based completion claim.
 
@@ -142,5 +150,7 @@ Use natural, purpose-appropriate explanations rather than chronological action l
 This workflow can analyze and optimize multiple modules or domains under one overall goal, and agents set their own technical priorities and iteration plans. It does not decide business strategy, staffing, financial budgets, or portfolio-level roadmaps, and it does not guarantee global optimality.
 
 Conclusions depend on available evidence. Business ownership and authority questions may require human judgment. Detailed role framing and optional model diversity reduce anchoring but do not guarantee independence or truth. Budget includes human attention as well as compute, time, and context; asynchronous evaluation is pending until the human responds.
+
+Never claim complete discovery of disorder. Record covered and uncovered areas, evidence confidence, and allowed actions; broader or irreversible actions require stronger coverage and evidence.
 
 This workflow is not a CI/CD system, production operator, performance or security certification process, migration executor, or project-delivery manager. Small execution tasks should bypass its design-group and documentation workflow.

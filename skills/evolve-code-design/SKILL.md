@@ -24,6 +24,10 @@ When the user explicitly invokes this workflow without a concrete goal:
 
 Use repository context to recommend goals, never to decide that work should start. Once the overall goal is selected, do not ask the user to choose each subsequent work item.
 
+After goal selection, perform a lightweight evidence triage. Enter targeted stabilization only when conflicting facts, unclear authority, unverifiable critical behavior, or unsafe change boundaries make optimization unsafe. Otherwise continue directly with the opportunity map. Do not require stabilization for every legacy project.
+
+When stabilization is required, read `references/legacy-stabilization.md`: establish runtime and evidence baselines, map change impact and action boundaries, and stabilize only the affected areas until they can safely support optimization. This is a targeted prerequisite, not whole-repository normalization.
+
 ## 2. Build an opportunity map autonomously
 
 Read `assets/AGENTS.md` for group collaboration and `references/discovery-strategies.md` for structural discovery.
@@ -118,11 +122,15 @@ When independent work is not dependent on a blocked operation, split it into a s
 
 ## 7. Verify improvements and reassess globally
 
+Before a significant modification, define a small Change Impact Map using `references/legacy-stabilization.md`: known callers, bypass paths, verified paths, unknown coverage, evidence confidence, change risk, allowed changes, and validation. Evidence confidence and change risk are independent; restrict irreversible or broad actions when either is unfavorable.
+
 Establish behavior protection before structural changes. Bind final evidence to the resulting revision and never report `not_run` or `inconclusive` as success.
 
 Every optimization claim must state what specifically improved and use matching evidence: concept accuracy, rule ownership, and lifecycles for conceptual models; cohesion and change reasons for responsibilities; dependency direction, coupling, and change impact for module boundaries; shared language and reduced ambiguity for naming; behavior baselines, tests, and compatibility for behavior changes; and before/after measurements for performance, resources, or cost.
 
 After meaningful work, reassess affected concepts, dependencies, invariants, and the opportunity map. Choose `keep`, `observe`, or `propose`. Use new evidence to revise the plan rather than defending earlier iterations.
+
+Run a micro-stabilization check for concept overlap, new rule or state owners, bypass paths, evidence validity, temporary-compatibility lifecycle, and whether the next agent can still find the correct entry point. Fix micro-disorder within the current work item when possible, pause only affected work for local stabilization when several work items are involved, and enter targeted stabilization only when facts or behavior become unsafe. Never expand a local finding into whole-repository refactoring.
 
 Default to sequential execution for dependent work. After integrating work items, repeat design-consistency and behavior verification rather than assuming independent success composes correctly. Any later code change invalidates affected prior evidence until it is revalidated. Pending asynchronous evaluation may remain unaccepted without preventing an evidence-based completion claim.
 
@@ -148,6 +156,7 @@ Present work outside the current goal as a new recommendation, not an automatica
 
 - Merge `assets/AGENTS.md` only when asked to adopt the workflow; never overwrite an existing file.
 - Read `references/discovery-strategies.md` for structural discovery on existing systems.
+- Read `references/legacy-stabilization.md` when evidence triage identifies conflicting facts, unclear authority, or unsafe change boundaries.
 - Use `assets/current-model.md` for the concise current-design view.
 - Use the two `.example.yaml` files only when execution records are needed.
 - Validate machine records after creating or modifying them.
@@ -168,8 +177,10 @@ This workflow can analyze and optimize multiple modules or domains under one ove
 
 Conclusions depend on available evidence. Business ownership and authority questions may require human judgment. Detailed role framing and optional model diversity reduce anchoring but do not guarantee independence or truth. Budget includes human attention as well as compute, time, and context; asynchronous evaluation is pending until the human responds.
 
+Never claim complete discovery of disorder. Record covered and uncovered areas, evidence confidence, and allowed actions; broader or irreversible actions require stronger coverage and evidence.
+
 This skill is not a CI/CD system, production operator, performance or security certification process, migration executor, or project-delivery manager. Small execution tasks should bypass its design-group and documentation workflow.
 
 ## Non-goals for v0.1
 
-Do not start from repository context alone, introduce a knowledge graph, atomize every paragraph, build a fixed multi-agent platform, prescribe fixed role identities or a separate model configuration, create permanent records for every feedback comment, turn every optimization into one giant Change, require per-item user selection, or expand beyond the selected goal without instruction. Automatic iteration within the selected goal and budget is expected; a fixed multi-agent scheduler is not.
+Do not start from repository context alone, introduce a knowledge graph, atomize every paragraph, build a fixed multi-agent platform, prescribe fixed role identities or a separate model configuration, create permanent records for every feedback comment, turn every optimization into one giant Change, require per-item user selection, expand beyond the selected goal without instruction, normalize an entire repository, or claim all chaos has been eliminated. Automatic iteration within the selected goal and budget is expected; a fixed multi-agent scheduler is not.
