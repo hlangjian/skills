@@ -66,6 +66,18 @@
       "prompt": "Harness 只有一个可供子 Agent 使用的模型。项目启动时还需要让用户为秘书、经理、研究员、执行者和评审者逐人选模型吗？",
       "expected_output": "不需要。唯一路由下不询问，所有子角色使用并记录该路由。秘书始终使用主 Agent 当前模型，用户可随时切换，不进入偏好文件；配置仅保存经理、研究员、执行者和评审者，角色展示附中文职责说明。",
       "files": []
+    },
+    {
+      "id": 12,
+      "prompt": "启动技能时，用户不准备自定义角色模型，而且本地还没有 model-preferences.local.yaml。启动流程应该创建文件吗？",
+      "expected_output": "必须创建。启动时即写入 Coordinator、Researcher、Executor、Reviewer 的实际默认 provider、model、思考强度和来源，用户无需自定义；写入后检查文件存在且可读。已有文件不得被启动默认值覆盖，秘书模型不进入文件，无法写入时明确报告初始化失败。",
+      "files": []
+    },
+    {
+      "id": 13,
+      "prompt": "Coordinator 准备创建两个子智能体，一项任务可能有现成 Skill 可用。创建前它应该怎么做？",
+      "expected_output": "可以先查看当前可用 Skills 列表，只分配与任务直接相关且确有帮助的 Skill；不相关不分配，无法加载时改用任务包传递必要内容。Coordinator 自身无需因此加载专业 Skill，未实际加载时不得声称子 Agent 已获得能力。",
+      "files": []
     }
   ]
 }

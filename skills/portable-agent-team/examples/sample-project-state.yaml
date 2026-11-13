@@ -1,6 +1,6 @@
 # Portable Agent Team 完整状态示例，不作为干净初始化模板。
 # Evidence 是 kind=evidence 的 Artifact，不另设对象。
-schemaVersion: portable-agent-team/v0.4.0
+schemaVersion: portable-agent-team/v0.4.1
 mode: nested_native_multi_agent
 
 topology:

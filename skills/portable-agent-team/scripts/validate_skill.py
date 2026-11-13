@@ -44,6 +44,8 @@ check("不是唯一通信通道" in text, "缺少允许人类直接指导角色�
 check("人类只与 Secretary 沟通" not in text, "仍存在过度严格的人类沟通限制")
 check("不构成真实的信息隔离、遗忘或认知独立性" in text, "降级模式的信息隔离说明不完整")
 check("Secretary 的表达与呈现" in text, "缺少 Secretary 表达与呈现规范")
+check("可以先查看当前可用的 Skills 列表" in text, "缺少 Coordinator 创建子智能体前的可选 Skills 检查")
+check("只有确有帮助时才分配" in text, "Skills 检查不应变成强制分配")
 
 secretary_text = (root / "references" / "roles" / "secretary.md").read_text(encoding="utf-8")
 coordinator_text = (root / "references" / "roles" / "coordinator.md").read_text(encoding="utf-8")
@@ -83,6 +85,8 @@ for collection in sorted(required_collections):
     check(clean.get(collection) == [], f"干净模板的 {collection} 应为空数组")
 check("只有一个可用路由时，不询问用户" in text, "缺少单模型路由免询问规则")
 check("秘书的模型不是技能配置项" in text, "秘书模型不应由技能配置")
+check("启动时必须确保 `model-preferences.local.yaml` 已经建立" in text, "缺少启动时强制建立模型偏好文件的规则")
+check("用户未修改时也创建" in text, "不能等用户自定义后才创建模型偏好文件")
 gitignore_path = root / ".gitignore"
 check(gitignore_path.is_file() and "model-preferences.local.yaml" in gitignore_path.read_text(encoding="utf-8"), "本地模型偏好文件未被 Git 忽略")
 expected_roles = {"coordinator", "researcher", "executor", "reviewer"}
