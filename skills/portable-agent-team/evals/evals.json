@@ -54,6 +54,12 @@
       "prompt": "项目需要核实相互矛盾的市场数据并设计最终报告。Coordinator 应如何使用 Researcher、Executor 和 Reviewer？",
       "expected_output": "Coordinator 分配 Researcher 核验关键未知和冲突来源，分配 Executor 完成报告制品，并由独立 Reviewer 挑战证据与结论。Researcher 提交实际来源、relation、note、冲突证据和剩余未知，不作项目决策或自我独立验收，也不直接修改全局状态。",
       "files": []
+    },
+    {
+      "id": 10,
+      "prompt": "一个项目启动时被判断为无需 Coordinator。执行中出现了多个会改变行动的关键未知，并新增了三个交付物。团队应继续遵循初始判断吗？",
+      "expected_output": "不应把初始判断当永久指令。Secretary 重新评估并创建 Coordinator，移交已有 Goal、制品、Task、Unknown、Assumption、Decision 和项目状态，沿用已确认的模型策略；Coordinator 创建后保持职责稳定，不因暂时平稳频繁撤销。",
+      "files": []
     }
   ]
 }

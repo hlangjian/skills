@@ -47,10 +47,12 @@ check("Secretary 的表达与呈现" in text, "缺少 Secretary 表达与呈现�
 
 secretary_text = (root / "references" / "roles" / "secretary.md").read_text(encoding="utf-8")
 coordinator_text = (root / "references" / "roles" / "coordinator.md").read_text(encoding="utf-8")
-check("创建、选择、改派或结束 Coordinator" in secretary_text, "Secretary Profile 未明确顶层协调者分配")
+check("创建 Coordinator" in secretary_text, "Secretary Profile 未明确顶层协调者分配")
 check("创建、选择、分派、改派或结束 Researcher 和 Executor" in coordinator_text, "Coordinator Profile 未明确研究与执行角色分配权")
 check("不逐条代替它编写任务单" in secretary_text, "Secretary Profile 未限制项目 micromanagement")
 check("检查模型与思考强度策略" in text, "缺少模型与思考强度初始化阶段")
+check("初始拓扑与动态升级" in text, "缺少动态拓扑升级规则")
+check("不因项目暂时平稳" in text, "缺少 Coordinator 创建后的职责稳定规则")
 
 researcher_path = root / "references" / "roles" / "researcher.md"
 check(researcher_path.is_file(), "缺少 Researcher Role Profile")

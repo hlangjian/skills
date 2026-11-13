@@ -1,7 +1,17 @@
 # Portable Agent Team 完整状态示例，不作为干净初始化模板。
 # Evidence 是 kind=evidence 的 Artifact，不另设对象。
-schemaVersion: portable-agent-team/v0.3.0
+schemaVersion: portable-agent-team/v0.3.1
 mode: nested_native_multi_agent
+
+topology:
+  current: nested
+  coordinatorStatus: active
+  initialAssessmentOnly: true
+  upgradeTriggers:
+    - 新出现会改变行动的关键未知
+    - 交付物或项目依赖显著增加
+    - 出现需要持续协调的异常
+  lastEvaluationAt: '2026-01-01T00:00:00Z'
 
 capabilities:
   independentExecutors: available
