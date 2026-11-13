@@ -1,0 +1,2 @@
+# 仅 scripts/validate_skill.py 使用；技能运行本身不要求安装 PyYAML。
+PyYAML>=6.0

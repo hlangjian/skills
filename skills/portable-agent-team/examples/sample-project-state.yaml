@@ -1,0 +1,139 @@
+# Portable Agent Team 完整状态示例，不作为干净初始化模板。
+# Evidence 是 kind=evidence 的 Artifact，不另设对象。
+schemaVersion: portable-agent-team/v0.1.2
+mode: native_multi_agent
+
+capabilities:
+  independentExecutors: available
+  taskDelegation: available
+  independentReviewer: available
+  persistentState: available
+  stableReferences: available
+
+goal:
+  id: goal-001
+  statement: 替换为项目目标
+  deliverables:
+    - 必须交付的成果
+  acceptanceCriteria:
+    - 可检查的验收条件
+  status: active
+  createdAt: '2026-01-01T00:00:00Z'
+  createdBy: secretary
+
+unknowns:
+  - id: unknown-001
+    question: 不同答案可能改变行动的待答问题
+    decisionImpact: 说明答案如何改变行动
+    status: open
+    relatedGoal: goal-001
+    resolutionRefs: []
+    createdAt: '2026-01-01T00:00:00Z'
+    createdBy: coordinator
+
+assumptions:
+  - id: assumption-001
+    statement: 为推进工作暂时采用的前提
+    basis: 当前采用它的依据
+    affectedDecisionIds:
+      - decision-001
+    validationMethod: 验证方式
+    invalidationCondition: 失效条件
+    status: active
+    createdAt: '2026-01-01T00:00:00Z'
+    createdBy: coordinator
+
+claims:
+  - id: claim-001
+    statement: 有证据支持的结论
+    status: supported
+    scope: 结论适用范围
+    evidenceRefs:
+      - ref: artifact-001?version=1#section=2
+        relation: supports
+        note: 该证据具体支持结论的哪一部分
+      - ref: artifact-001?version=1#section=1
+        relation: context
+        note: 仅提供背景，不直接证明结论
+    supersedes: null
+    createdAt: '2026-01-01T00:00:00Z'
+    createdBy: researcher-01
+
+decisions:
+  - id: decision-001
+    choice: 基于当前信息作出的选择
+    rationale: 决策理由摘要
+    basedOn:
+      claimIds:
+        - claim-001
+      assumptionIds:
+        - assumption-001
+      unknownIds:
+        - unknown-001
+      artifactRefs:
+        - artifact-001?version=1
+    revisitWhen: 哪些新信息会触发重新评估
+    status: active
+    supersedes: null
+    createdAt: '2026-01-01T00:00:00Z'
+    createdBy: coordinator
+
+tasks:
+  - id: task-001
+    goal: 调查 unknown-001
+    type: investigate
+    assignee: researcher-01
+    inputRefs:
+      - artifact-001?version=1
+    deliverableSpec: 分析报告与来源清单
+    evidenceRequirements: 重要结论必须关联具体证据版本
+    acceptanceCriteria:
+      - 回答研究问题或明确尚未查明
+      - 区分观察、推断与未解决问题
+    status: done
+    resultArtifactIds:
+      - artifact-002
+    parentTaskId: null
+    triggerReviewId: null
+    createdAt: '2026-01-01T00:00:00Z'
+    createdBy: coordinator
+
+artifacts:
+  - id: artifact-001
+    kind: evidence
+    location: artifacts/source-evidence.md
+    version: 1
+    createdBy: researcher-01
+    createdAt: '2026-01-01T00:00:00Z'
+    sourceRefs: []
+    supersedes: null
+  - id: artifact-002
+    kind: deliverable
+    location: artifacts/research-report.md
+    version: 1
+    createdBy: researcher-01
+    createdAt: '2026-01-01T00:00:00Z'
+    sourceRefs:
+      - artifact-001?version=1
+    supersedes: null
+
+reviews:
+  - id: review-001
+    targetTaskId: task-001
+    targetRefs:
+      - artifact-002?version=1
+    reviewer: reviewer-01
+    verdict: conditional_pass
+    findings:
+      - severity: non_blocking
+        statement: 结论范围基本合理，但需补充适用边界
+        evidenceRefs:
+          - artifact-002?version=1#section=4
+        requiredChange: 在最终报告中声明适用范围
+    conditions:
+      - statement: 补充结论适用范围
+        owner: researcher-01
+    coverage: 已检查研究问题、证据与结论范围
+    notCovered: 未独立复现原始数据收集
+    createdAt: '2026-01-01T00:00:00Z'
+    createdBy: reviewer-01

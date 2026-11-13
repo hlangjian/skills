@@ -1,0 +1,35 @@
+{
+  "skill_name": "portable-agent-team",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "把这份会议记录整理成五条待办，每条包含负责人和截止日期。原文没有的信息不要补。",
+      "expected_output": "直接执行或由 Secretary 管理单个 Executor，不创建 Coordinator，不初始化完整项目状态，不编造负责人或日期。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "评估我们是否进入一个新的企业软件市场。现有市场数据相互矛盾，客户定义也不清楚。请组织团队先查明关键未知，再交付建议、研究报告和证据引用，并进行独立评审。",
+      "expected_output": "主 Agent 默认是 Secretary，并独占所有子智能体分配；使用 Coordinator 记录关键 Unknown 和 Assumption；Coordinator 只协调任务并独占写入项目状态，不自行创建 Agent；Executor 提交制品和证据；Claim 使用 relation 与 note；Task.done 不等于验收；Reviewer 独立挑战；返工使用关联原任务和评审的新 Task。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "当前环境只有你一个 Agent 和文件工具，没有子 Agent、委派或独立评审通道。请仍然按 portable-agent-team 规范完成一项包含关键未知的研究项目。",
+      "expected_output": "明确标注 Sequential Fallback，由单 Agent 顺序模拟角色，不声称发生真实 Agent 分配；只有 Coordinator 阶段更新全局状态；保留任务、证据和决策协议；明确模拟评审不具备真正独立性，高影响结论请求人类复核。",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "项目进行中，Coordinator 发现需要增加两名研究员和一名独立评审员。请说明它接下来应该怎样获得这些角色。",
+      "expected_output": "Coordinator 规划需求并向 Secretary 提交包含角色、任务和理由的分配请求；Secretary 独占创建、选择或改派实例的权力；Coordinator 不直接创建子 Agent，并在实例分配后协调任务。",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "用户没有联系 Secretary，而是直接给 Coordinator 一项具体技术指导和另一项会改变验收标准的新要求。团队应该如何处理？",
+      "expected_output": "允许人类直接指导具体工作；当前目标和授权内的任务级指导无需转交；改变验收标准的要求必须同步 Secretary 和 Coordinator，并检查受影响的 Task、Decision、Assumption 和交付物；不重复询问已明确的用户决定，且不改变 Secretary 的实例分配权。",
+      "files": []
+    }
+  ]
+}
