@@ -12,7 +12,7 @@ Coordinator 负责集成和项目级验收；Reviewer 负责独立挑战；自�
 
 ## 2. 独立性要求
 
-Native Multi-Agent 中，Reviewer 由 Secretary 创建或分配，Coordinator 只提出评审请求。Reviewer 使用独立上下文，并根据研究问题、验收标准和证据评审。
+Nested Native Multi-Agent 中，最终独立 Reviewer 由 Secretary 创建或分配，Coordinator 提出项目级评审请求；任务级评审可由 Coordinator 在授权范围内安排独立上下文。Reviewer 根据研究问题、验收标准和证据评审，不受 Executor 或 Coordinator 结论支配。
 
 Sequential Fallback 中，同一 Agent 的 Reviewer 角色只是模拟评审，不具有真正的上下文隔离。必须明确标注；高影响结论需要人类或 Harness 实际提供的独立通道。
 

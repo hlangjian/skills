@@ -1,12 +1,13 @@
 # Portable Agent Team 干净初始化模板。
-# mode 使用 native_multi_agent 或 sequential_fallback。
+# mode 使用 nested_native_multi_agent、flat_delegation_fallback 或 sequential_fallback。
 # Evidence 是 kind=evidence 的 Artifact，不另设对象。
-schemaVersion: portable-agent-team/v0.1.2
-mode: native_multi_agent
+schemaVersion: portable-agent-team/v0.2.1
+mode: nested_native_multi_agent
 
 capabilities:
   independentExecutors: available
   taskDelegation: available
+  maxDelegationDepth: 2
   independentReviewer: unavailable
   persistentState: available
   stableReferences: available

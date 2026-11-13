@@ -36,7 +36,7 @@
 
 ### 3. 分派与提交
 
-Coordinator 规划市场数据 Task 和客户研究 Task，Secretary 分配对应的 Executor 实例。Executor 提交报告、原始证据、验证和剩余未知，但不直接修改共享状态。需要新增实例时，Coordinator 只能向 Secretary 提出分配请求。
+Coordinator 规划市场数据 Task 和客户研究 Task，并在授权范围内直接创建、分配对应的 Executor 实例。Executor 向 Coordinator 提交报告、原始证据、验证和剩余未知，但不直接修改共享状态。Secretary 不逐条转发执行结果。
 
 示例 Claim：
 

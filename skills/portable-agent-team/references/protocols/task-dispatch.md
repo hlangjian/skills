@@ -6,7 +6,7 @@
 
 ## 1. 创建任务单
 
-Secretary 独占 Agent 实例分配权。Coordinator 规划和记录 Task，在已分配的实例之间协调工作；需要新实例时向 Secretary 提交角色、任务和理由，不自行创建或改派 Agent。任务单中的 `assignee` 必须与 Secretary 的实际分配一致。
+Coordinator 在项目授权范围内创建、选择、分派、改派或结束 Executor，并直接接收其结果。任务单中的 `assignee` 必须与 Coordinator 的实际分配一致。Secretary 负责分配 Coordinator 和最终独立 Reviewer，不代替 Coordinator 逐条下发执行指令或转发 Worker 结果。
 
 Coordinator 为每项 Task 记录：
 

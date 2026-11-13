@@ -10,7 +10,7 @@
     {
       "id": 2,
       "prompt": "评估我们是否进入一个新的企业软件市场。现有市场数据相互矛盾，客户定义也不清楚。请组织团队先查明关键未知，再交付建议、研究报告和证据引用，并进行独立评审。",
-      "expected_output": "主 Agent 默认是 Secretary，并独占所有子智能体分配；使用 Coordinator 记录关键 Unknown 和 Assumption；Coordinator 只协调任务并独占写入项目状态，不自行创建 Agent；Executor 提交制品和证据；Claim 使用 relation 与 note；Task.done 不等于验收；Reviewer 独立挑战；返工使用关联原任务和评审的新 Task。",
+      "expected_output": "主 Agent 默认是 Secretary；Secretary 创建 Coordinator 和最终 Reviewer；Coordinator 创建并管理 Executor 且直接接收结果，独占写入项目状态；Secretary 不逐条下发执行指令或做内容级返工编排；Claim 使用 relation 与 note；Task.done 不等于验收；返工使用关联原任务和评审的新 Task。",
       "files": []
     },
     {
@@ -22,13 +22,25 @@
     {
       "id": 4,
       "prompt": "项目进行中，Coordinator 发现需要增加两名研究员和一名独立评审员。请说明它接下来应该怎样获得这些角色。",
-      "expected_output": "Coordinator 规划需求并向 Secretary 提交包含角色、任务和理由的分配请求；Secretary 独占创建、选择或改派实例的权力；Coordinator 不直接创建子 Agent，并在实例分配后协调任务。",
+      "expected_output": "Coordinator 在项目授权范围内直接创建和分配两名 Executor，并确认实例句柄与结果通道；需要最终独立 Reviewer 时向 Secretary 提出请求，由 Secretary 分配；不得要求 Secretary 逐条管理研究任务。",
       "files": []
     },
     {
       "id": 5,
       "prompt": "用户没有联系 Secretary，而是直接给 Coordinator 一项具体技术指导和另一项会改变验收标准的新要求。团队应该如何处理？",
-      "expected_output": "允许人类直接指导具体工作；当前目标和授权内的任务级指导无需转交；改变验收标准的要求必须同步 Secretary 和 Coordinator，并检查受影响的 Task、Decision、Assumption 和交付物；不重复询问已明确的用户决定，且不改变 Secretary 的实例分配权。",
+      "expected_output": "允许人类直接指导具体工作；当前目标和授权内的任务级指导无需转交；改变验收标准的要求必须同步 Secretary 和 Coordinator，并检查受影响的 Task、Decision、Assumption 和交付物；不重复询问已明确的用户决定，且不改变 Secretary 分配 Coordinator、Coordinator 分配 Executor 的关系。",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Coordinator 和三个 Executor 正在并行工作，一个普通子任务刚刚提交。Secretary 应怎样向用户汇报？",
+      "expected_output": "不为普通认领或提交发送格式化进度播报；由 Coordinator 继续管理执行细节。Secretary 只在重要发现、方向变化、阻塞或最终交付时，用自然克制的一两句话说明结果、影响和待决事项，不堆砌内部任务编号或自我表扬。",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "当前 Harness 支持主 Agent 创建直接子 Agent，但不允许子 Agent 再创建下一代。一个复杂项目需要三层团队，应如何启动？",
+      "expected_output": "检测到最大委派深度为 1，选择 Flat Delegation Fallback；Secretary 暂时创建所有直接子实例，Coordinator 通过消息协调；明确这不是实际三层树，并披露主 Agent 可能成为通知中枢。不得声称 Coordinator 已直接创建 Executor。",
       "files": []
     }
   ]
