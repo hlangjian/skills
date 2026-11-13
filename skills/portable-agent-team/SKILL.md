@@ -1,12 +1,12 @@
 ---
 name: portable-agent-team
-description: 用 Secretary、Coordinator、Executor 与独立 Reviewer 组织需要持续协调、未知识别、证据追溯和独立评审的项目。用户提到三层智能体团队、多 Agent 协作、项目协调者、未知或假设管理、制品证据链、独立评审，或希望把复杂项目交给团队完成时，应使用本技能；即使用户没有明确说“多 Agent”，只要计划明显依赖执行中获得的信息，也应考虑使用。简单、单目标、验收明确的一次性任务不要强行启用协调者。Secretary 分配 Coordinator，Coordinator 分配 Executor；支持嵌套多 Agent、诚实标注的扁平或单 Agent 降级。
-compatibility: 真实三层需要 Coordinator 能继续创建 Executor（嵌套深度至少为 2）；不支持嵌套时可明确降级为扁平委派，不支持委派时使用单 Agent 顺序模拟。读写文件用于持久化状态与制品，无文件能力时可内联记录但须披露限制。无需插件、MCP、数据库或专用后台。
+description: 用 Secretary、Coordinator、Researcher、Executor 与独立 Reviewer 组织需要持续协调、未知识别、证据追溯和独立评审的项目。用户提到三层智能体团队、多 Agent 协作、项目协调者、研究员、未知或假设管理、制品证据链、独立评审，或希望把复杂项目交给团队完成时，应使用本技能；即使用户没有明确说“多 Agent”，只要计划明显依赖执行中获得的信息，也应考虑使用。简单、单目标、验收明确的一次性任务不要强行启用协调者。Secretary 分配 Coordinator，Coordinator 分配 Researcher 或 Executor；支持角色模型与思考强度策略、嵌套多 Agent、诚实标注的扁平或单 Agent 降级。
+compatibility: 真实三层需要 Coordinator 能继续创建执行角色（嵌套深度至少为 2）；不支持嵌套时可明确降级为扁平委派，不支持委派时使用单 Agent 顺序模拟。角色模型与思考强度只能在 Harness 允许的路由内选择。读写文件用于持久化状态与制品，无文件能力时可内联记录但须披露限制。无需插件、MCP、数据库或专用后台。
 ---
 
 # Portable Agent Team
 
-> 规范版本：v0.2.1
+> 规范版本：v0.3.0
 
 把这套规范当作**可移植的协作协议**，不要把它当作多 Agent Runtime。本技能不会创建 Harness 不支持的 Agent、权限或持久化能力。
 
@@ -75,17 +75,7 @@ Reviewer 是质量保证机制，不是第四个行政层级。不要自行增�
 
 深度为 `unknown` 时标记“尚未验证”，不要声称支持三层。可以在已有任务确实需要委派时，通过首次实际创建和返回的实例深度确认；不要为了测试空创建一批无任务 Agent。接口存在只记为“可用、尚未实测”，首次创建并收到有效实例句柄和结果后才记为“已验证”。创建失败时按实际支持深度降级，不得声称创建成功。
 
-### 2. Agent 实例化与角色绑定
-
-Role Profile 是实际实例的职责配置来源，不是 Agent 本身。使用 Harness 原生创建或委派机制，不虚构跨环境通用接口。
-
-- Secretary 创建 Coordinator 和最终 Reviewer，并注入对应 Role Profile、项目简报与授权范围。
-- Coordinator 创建 Executor，并注入 Executor Role Profile、任务单、必要输入与验收标准。
-- 角色指令与任务输入分开传递；只附带当前角色需要的协议和引用。
-- Coordinator 获得项目状态写入职责；Executor 和 Reviewer 只获得结果提交通道。
-- 每个创建者确认实例身份、委派句柄和结果通道。Executor 的结果由 Coordinator 接收，Secretary 不代替 Coordinator 接收和逐条转发。
-
-### 3. 判断是否需要 Coordinator
+### 2. 判断是否需要 Coordinator
 
 满足以下多数特征时，直接完成或由 Secretary 管理单个 Executor：
 
@@ -107,18 +97,54 @@ Role Profile 是实际实例的职责配置来源，不是 Agent 本身。使用
 
 并行不是必要条件。不要仅为展示三层结构而创建 Coordinator。
 
-### 4. 加载必要资源
+### 3. 检查模型与思考强度策略
+
+在创建角色实例前，检查 Harness 实际允许子 Agent 使用的 provider、model、思考强度、上下文窗口、多模态能力及路由限制。不要仅凭主 Agent 当前路由推断子 Agent 也能使用，不要假设所有 provider 都有统一强度档位。
+
+Secretary 向用户提供一次轻量选择：
+
+- 采用推荐组合；
+- 自定义各角色默认模型与思考强度；
+- 每个项目重新决定。
+
+推荐原则：
+
+| 角色 | 更看重的能力 | 默认策略 |
+|---|---|---|
+| Secretary | 偏好理解、自然表达、信息呈现、长期上下文 | 表达与指令遵循优先，不盲目使用最高强度 |
+| Coordinator | 校准、规划、未知管理、证据判断 | 推理稳定性和长上下文优先，默认较高强度 |
+| Researcher | 检索、阅读原文、来源核验、冲突证据整理 | 阅读与证据核验优先，按研究难度选择 |
+| Executor | 专业执行、工具使用、明确交付 | 默认高效配置，按任务难度与专业需求覆盖 |
+| Reviewer | 反证、逻辑检查、证据复核 | 默认较高强度；可用时可与 Executor 使用不同模型 |
+
+Reviewer 与 Executor 使用不同模型可以减少同源错误，但独立性首先来自独立上下文和评审流程。模型按能力与任务选择，不按行政级别选择。
+
+用户确认后保存为角色默认策略，不要每个任务重复询问。Executor 和 Researcher 可以按任务覆盖默认值。选定路由创建失败时明确报告，不静默换模型；思考强度更高不必然带来更好结果。
+
+### 4. Agent 实例化与角色绑定
+
+Role Profile 是实际实例的职责配置来源，不是 Agent 本身。使用 Harness 原生创建或委派机制，不虚构跨环境通用接口。
+
+- Secretary 创建 Coordinator 和最终 Reviewer，并注入对应 Role Profile、项目简报、授权范围和已确认的模型策略。
+- Coordinator 按任务创建 Researcher 或 Executor，并注入对应 Role Profile、任务单、必要输入、验收标准和模型策略。
+- Researcher 是 Executor 的专业形态，不是新的行政层级；只在需要调查关键未知时分配。
+- 角色指令与任务输入分开传递；只附带当前角色需要的协议和引用。
+- Coordinator 获得项目状态写入职责；Researcher、Executor 和 Reviewer 只获得结果提交通道。
+- 每个创建者确认实例身份、实际模型路由、委派句柄和结果通道。Researcher 与 Executor 的结果由 Coordinator 接收，Secretary 不代替 Coordinator 接收和逐条转发。
+
+### 5. 加载必要资源
 
 以下相对路径均相对于本 `SKILL.md` 所在目录。只读取当前步骤需要的文件。
 
 | 需要 | 读取 |
 |---|---|
 | 理解用户、选择拓扑、自然呈现 | `references/roles/secretary.md` |
-| 创建项目状态、分配 Executor、管理决策 | `references/roles/coordinator.md` |
+| 创建项目状态、分配执行角色、管理决策 | `references/roles/coordinator.md` |
+| 调查关键未知、核验证据 | `references/roles/researcher.md` 与 `references/roles/executor.md` |
 | 分派任务、提交结果、返工 | `references/roles/executor.md` 与 `references/protocols/task-dispatch.md` |
 | 记录结论、证据、假设或决策 | `references/protocols/evidence-traceability.md` |
 | 独立评审、条件通过、复审 | `references/roles/reviewer.md` 与 `references/protocols/independent-review.md` |
-| 初始化项目状态 | `references/schemas/project-state.yaml` |
+| 初始化项目状态与模型策略 | `references/schemas/project-state.yaml` |
 | 查看完整状态示例 | `examples/sample-project-state.yaml` |
 | 查看简单任务运行方式 | `examples/simple-task.md` |
 | 查看复杂项目与降级方式 | `examples/multi-agent-project.md` |
@@ -142,11 +168,19 @@ Secretary 不逐条编写 Executor 的任务单，不代替 Coordinator 做内�
 1. 读取 Coordinator 角色和所需协议。
 2. 初始化 Goal、关键 Unknown 和必要 Assumption。
 3. 优先调查“不同答案会导致不同行动”的未知。
-4. 按 Task Dispatch Protocol 规划任务，创建并分配 Executor，直接接收其结果。
-5. 作为项目状态唯一写入者，整合执行者提交的制品与结果。
+4. 按 Task Dispatch Protocol 规划任务，按任务创建并分配 Researcher 或 Executor，直接接收其结果。
+5. 作为项目状态唯一写入者，整合研究与执行制品及结果。
 6. 检查证据与结论的推断距离，维护 Claim、Assumption 和 Decision。
 7. 组织返工、项目级验收与项目级汇报；需要最终独立评审时向 Secretary 提出请求。
 8. 新证据、用户指导或假设变化使计划失效时，重新评估受影响的 Task 和 Decision。
+
+### Researcher
+
+1. 只在需要调查关键未知时由 Coordinator 分配，并叠加遵循 Executor 的交付边界。
+2. 将研究问题拆成可验证的子问题，检查任务前提。
+3. 实际核对重要来源，区分来源陈述、直接观察与自己的推断。
+4. 提交支持、反驳和背景证据、冲突来源、剩余未知，以及研究发现可能改变的项目决策。
+5. 不把资料堆积当成研究，不替 Coordinator 作项目决策，不替 Reviewer 给自己做独立验收。
 
 ### Executor
 

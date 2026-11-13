@@ -42,6 +42,18 @@
       "prompt": "当前 Harness 支持主 Agent 创建直接子 Agent，但不允许子 Agent 再创建下一代。一个复杂项目需要三层团队，应如何启动？",
       "expected_output": "检测到最大委派深度为 1，选择 Flat Delegation Fallback；Secretary 暂时创建所有直接子实例，Coordinator 通过消息协调；明确这不是实际三层树，并披露主 Agent 可能成为通知中枢。不得声称 Coordinator 已直接创建 Executor。",
       "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "启动一个三层研究项目。Harness 允许两种模型，Secretary 希望全部角色都使用最高思考强度。应怎样确定角色模型？",
+      "expected_output": "先检查子 Agent 实际允许的模型和强度；向用户提供推荐组合、自定义、每项目再选三种方式，并保存一次选择。Coordinator 和 Reviewer 优先考虑推理与证据判断，Researcher 优先阅读原文和来源核验，Executor 按任务选择；不默认所有角色最高强度，不把模型等级按行政层级排列，不静默换模型。",
+      "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "项目需要核实相互矛盾的市场数据并设计最终报告。Coordinator 应如何使用 Researcher、Executor 和 Reviewer？",
+      "expected_output": "Coordinator 分配 Researcher 核验关键未知和冲突来源，分配 Executor 完成报告制品，并由独立 Reviewer 挑战证据与结论。Researcher 提交实际来源、relation、note、冲突证据和剩余未知，不作项目决策或自我独立验收，也不直接修改全局状态。",
+      "files": []
     }
   ]
 }

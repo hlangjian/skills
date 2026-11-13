@@ -48,8 +48,16 @@ check("Secretary 的表达与呈现" in text, "缺少 Secretary 表达与呈现�
 secretary_text = (root / "references" / "roles" / "secretary.md").read_text(encoding="utf-8")
 coordinator_text = (root / "references" / "roles" / "coordinator.md").read_text(encoding="utf-8")
 check("创建、选择、改派或结束 Coordinator" in secretary_text, "Secretary Profile 未明确顶层协调者分配")
-check("创建、选择、分派、改派或结束 Executor" in coordinator_text, "Coordinator Profile 未明确 Executor 分配权")
+check("创建、选择、分派、改派或结束 Researcher 和 Executor" in coordinator_text, "Coordinator Profile 未明确研究与执行角色分配权")
 check("不逐条代替它编写任务单" in secretary_text, "Secretary Profile 未限制项目 micromanagement")
+check("检查模型与思考强度策略" in text, "缺少模型与思考强度初始化阶段")
+
+researcher_path = root / "references" / "roles" / "researcher.md"
+check(researcher_path.is_file(), "缺少 Researcher Role Profile")
+if researcher_path.is_file():
+    researcher_text = researcher_path.read_text(encoding="utf-8")
+    check("Executor 的专业形态" in researcher_text, "Researcher 不应成为新的行政层级")
+    check("查不到可靠答案时明确标记" in researcher_text, "Researcher 缺少未知披露规则")
 
 references = set(re.findall(r"`((?:references|examples)/[^`]+)`", text))
 for relative in sorted(references):
@@ -71,6 +79,8 @@ check(required_collections.issubset(clean), "干净模板缺少必要对象")
 check(clean.get("goal") is None, "干净模板的 goal 应初始化为 null")
 for collection in sorted(required_collections):
     check(clean.get(collection) == [], f"干净模板的 {collection} 应为空数组")
+expected_roles = {"secretary", "coordinator", "researcher", "executor", "reviewer"}
+check(clean.get("modelPolicy", {}).get("roles", {}).keys() == expected_roles, "干净模板的模型策略角色不完整")
 
 sample_path = root / "examples" / "sample-project-state.yaml"
 sample = yaml.safe_load(sample_path.read_text(encoding="utf-8"))

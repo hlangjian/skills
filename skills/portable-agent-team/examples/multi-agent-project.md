@@ -10,6 +10,8 @@
 
 确认交付物为“进入建议＋研究报告＋证据引用”，验收时要求区分市场事实、暂时假设和未解决问题。由于数据矛盾、计划依赖调查结果，创建 Coordinator。
 
+Secretary 先展示 Harness 实际允许的模型与思考强度，建议 Coordinator 和最终 Reviewer 使用较强推理配置，Researcher 按研究难度选择，普通 Executor 使用高效配置。用户选择“采用推荐组合”后，将策略记录到 `modelPolicy`，不在每个任务重复询问。
+
 ### 2. Coordinator 初始化状态
 
 复制 `references/schemas/project-state.yaml`，由 Coordinator 独占写入。
@@ -36,7 +38,7 @@
 
 ### 3. 分派与提交
 
-Coordinator 规划市场数据 Task 和客户研究 Task，并在授权范围内直接创建、分配对应的 Executor 实例。Executor 向 Coordinator 提交报告、原始证据、验证和剩余未知，但不直接修改共享状态。Secretary 不逐条转发执行结果。
+Coordinator 规划市场数据 Task 和客户研究 Task，并在授权范围内分配 Researcher 调查关键未知、分配 Executor 完成报告整合。两类角色都向 Coordinator 提交制品、证据、验证和剩余未知，不直接修改共享状态。Secretary 不逐条转发执行结果。
 
 示例 Claim：
 
