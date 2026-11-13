@@ -10,7 +10,7 @@
 
 确认交付物为“进入建议＋研究报告＋证据引用”，验收时要求区分市场事实、暂时假设和未解决问题。由于数据矛盾、计划依赖调查结果，创建 Coordinator。
 
-Secretary 先展示 Harness 实际允许的模型与思考强度，建议 Coordinator 和最终 Reviewer 使用较强推理配置，Researcher 按研究难度选择，普通 Executor 使用高效配置。用户选择“采用推荐组合”后，将策略记录到 `modelPolicy`，不在每个任务重复询问。
+Secretary 检查 Harness 实际允许的子角色模型与思考强度。只有一个可用路由时不询问；有多个路由时默认沿用主 Agent 当前允许的路由，并提示用户可稍后按角色自定义。展示经理、研究员、执行者和评审者时附带中文职责说明。秘书始终使用主 Agent 当前模型，不进入 `modelPolicy`。
 
 ### 2. Coordinator 初始化状态
 

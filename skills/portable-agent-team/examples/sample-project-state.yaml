@@ -1,6 +1,6 @@
 # Portable Agent Team 完整状态示例，不作为干净初始化模板。
 # Evidence 是 kind=evidence 的 Artifact，不另设对象。
-schemaVersion: portable-agent-team/v0.3.1
+schemaVersion: portable-agent-team/v0.4.0
 mode: nested_native_multi_agent
 
 topology:
@@ -21,11 +21,11 @@ capabilities:
   persistentState: available
   stableReferences: available
 
-# 仅演示自定义路由，不构成通用模型推荐。
+# 秘书始终使用主 Agent 当前模型，不进入本配置。
+# 以下仅演示子角色自定义路由，不构成通用模型推荐。
 modelPolicy:
   selectionMode: custom
   roles:
-    secretary: {provider: deepseek-official, model: deepseek-flash, reasoningEffort: max}
     coordinator: {provider: deepseek-official, model: deepseek-v4-pro, reasoningEffort: max}
     researcher: {provider: deepseek-official, model: deepseek-flash, reasoningEffort: max}
     executor: {provider: deepseek-official, model: deepseek-flash, reasoningEffort: max}

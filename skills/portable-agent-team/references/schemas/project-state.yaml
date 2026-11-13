@@ -1,7 +1,7 @@
 # Portable Agent Team 干净初始化模板。
 # mode 使用 nested_native_multi_agent、flat_delegation_fallback 或 sequential_fallback。
 # Evidence 是 kind=evidence 的 Artifact，不另设对象。
-schemaVersion: portable-agent-team/v0.3.1
+schemaVersion: portable-agent-team/v0.4.0
 mode: nested_native_multi_agent
 
 topology:
@@ -19,11 +19,11 @@ capabilities:
   persistentState: available
   stableReferences: available
 
-# null 表示实例化时按 Harness 推荐与允许路由确定，不代表静默换模型。
+# 秘书始终使用主 Agent 当前模型，不进入本配置。
+# 子角色的 null 表示实例化时按 Harness 推荐与允许路由确定，不代表静默换模型。
 modelPolicy:
-  selectionMode: recommended
+  selectionMode: inherited
   roles:
-    secretary: {provider: null, model: null, reasoningEffort: null}
     coordinator: {provider: null, model: null, reasoningEffort: null}
     researcher: {provider: null, model: null, reasoningEffort: null}
     executor: {provider: null, model: null, reasoningEffort: null}

@@ -81,8 +81,13 @@ check(required_collections.issubset(clean), "干净模板缺少必要对象")
 check(clean.get("goal") is None, "干净模板的 goal 应初始化为 null")
 for collection in sorted(required_collections):
     check(clean.get(collection) == [], f"干净模板的 {collection} 应为空数组")
-expected_roles = {"secretary", "coordinator", "researcher", "executor", "reviewer"}
-check(clean.get("modelPolicy", {}).get("roles", {}).keys() == expected_roles, "干净模板的模型策略角色不完整")
+check("只有一个可用路由时，不询问用户" in text, "缺少单模型路由免询问规则")
+check("秘书的模型不是技能配置项" in text, "秘书模型不应由技能配置")
+gitignore_path = root / ".gitignore"
+check(gitignore_path.is_file() and "model-preferences.local.yaml" in gitignore_path.read_text(encoding="utf-8"), "本地模型偏好文件未被 Git 忽略")
+expected_roles = {"coordinator", "researcher", "executor", "reviewer"}
+check(clean.get("modelPolicy", {}).get("roles", {}).keys() == expected_roles, "模型策略应只包含四个子角色，不应包含秘书")
+check(clean.get("modelPolicy", {}).get("selectionMode") == "inherited", "模型策略默认应为继承主 Agent 路由")
 
 sample_path = root / "examples" / "sample-project-state.yaml"
 sample = yaml.safe_load(sample_path.read_text(encoding="utf-8"))
