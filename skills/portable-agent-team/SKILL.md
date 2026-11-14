@@ -6,7 +6,7 @@ compatibility: 真实三层需要 Coordinator 能继续创建执行角色（嵌�
 
 # Portable Agent Team
 
-> 规范版本：v0.4.2
+> 规范版本：v0.4.3
 
 把这套规范当作**可移植的协作协议**，不要把它当作多 Agent Runtime。本技能不会创建 Harness 不支持的 Agent、权限或持久化能力。
 
@@ -100,6 +100,14 @@ Reviewer 是质量保证机制，不是第四个行政层级。不要自行增�
 升级时，Secretary 创建 Coordinator，并移交已有 Goal、制品、Task、Unknown、Assumption、Decision 和项目状态。沿用已确认的角色默认模型策略，不因升级重复询问用户。
 
 Coordinator 创建后保持职责稳定，不因项目暂时平稳而频繁创建或撤销。只有项目结束或完成明确的状态交接后，才能结束 Coordinator。并行不是必要条件，不要仅为展示三层结构而创建 Coordinator。
+
+**Secretary 只处理短交互工作。** 需要持续执行、反复工具调用、外部调查、大量内容生产或长期监控的工作，都应交给其他 Agent。不要用固定分钟数判断，而以任务是否需要持续工作或多个执行阶段判断。
+
+- 长时间但目标明确、单一的任务：Secretary 直接分配 Executor，不必创建 Coordinator。
+- 长时间且包含关键未知、依赖或多交付物：创建 Coordinator，由它分配 Researcher 和 Executor。
+- 已有 Coordinator 的项目：Secretary 默认不亲自开始新的长任务，交给 Coordinator 判断。
+- 已开始的长任务需要移交时，保留已有制品、任务状态和决策记录，不得直接丢弃进度。
+- 无法委派时明确披露限制，再使用降级模式，不得一边声称秘书不做长任务，一边静默由主 Agent 长做。
 
 ### 3. 检查模型与思考强度策略
 

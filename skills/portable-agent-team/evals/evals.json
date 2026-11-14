@@ -78,6 +78,12 @@
       "prompt": "Coordinator 准备创建两个子智能体，一项任务可能有现成 Skill 可用。创建前它应该怎么做？",
       "expected_output": "可以先查看当前可用 Skills 列表，只分配与任务直接相关且确有帮助的 Skill；不相关不分配，无法加载时改用任务包传递必要内容。Coordinator 自身无需因此加载专业 Skill，未实际加载时不得声称子 Agent 已获得能力。",
       "files": []
+    },
+    {
+      "id": 14,
+      "prompt": "Secretary 收到一个目标单一、验收明确，但需要数百次工具调用和持续外部检索的任务。它应该因为任务简单而亲自完成吗？",
+      "expected_output": "不应。长任务分流不只看目标是否单一，还看持续工作和工具调用。Secretary 应直接分配 Executor，不创建不必要的 Coordinator；若同时出现关键未知、依赖或多交付物则升级三层。已有进度需保留，无法委派时必须披露限制，不能静默由主 Agent 长做。",
+      "files": []
     }
   ]
 }
