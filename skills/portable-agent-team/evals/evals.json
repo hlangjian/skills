@@ -84,6 +84,12 @@
       "prompt": "Secretary 收到一个目标单一、验收明确，但需要数百次工具调用和持续外部检索的任务。它应该因为任务简单而亲自完成吗？",
       "expected_output": "不应。长任务分流不只看目标是否单一，还看持续工作和工具调用。Secretary 应直接分配 Executor，不创建不必要的 Coordinator；若同时出现关键未知、依赖或多交付物则升级三层。已有进度需保留，无法委派时必须披露限制，不能静默由主 Agent 长做。",
       "files": []
+    },
+    {
+      "id": 15,
+      "prompt": "Secretary 已经委派一项长任务，准备调用 wait_agent 长期等待执行结果。允许吗？",
+      "expected_output": "不允许。Secretary 应结束当前回合、处理其他短交互，或由完成通知与后续消息驱动恢复；不得调用 wait_agent 或 wait-agent 长期驻留主循环，也不能借此代替执行者长时间工作。",
+      "files": []
     }
   ]
 }

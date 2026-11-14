@@ -46,6 +46,7 @@ check("不构成真实的信息隔离、遗忘或认知独立性" in text, "降�
 check("Secretary 的表达与呈现" in text, "缺少 Secretary 表达与呈现规范")
 check("Secretary 只处理短交互工作" in text, "缺少 Secretary 长任务委派规则")
 check("反复工具调用" in text and "长期监控" in text, "长任务判据不完整")
+check("明确禁止 Secretary 调用 `wait_agent` 或 `wait-agent`" in text, "缺少禁止 Secretary 使用 wait_agent 的规则")
 check("可以先查看当前可用的 Skills 列表" in text, "缺少 Coordinator 创建子智能体前的可选 Skills 检查")
 check("只有确有帮助时才分配" in text, "Skills 检查不应变成强制分配")
 
